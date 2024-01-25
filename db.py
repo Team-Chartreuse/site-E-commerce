@@ -1,5 +1,5 @@
-HOST = "0.0.0.0"
-USER = ""
-PASSWD = ""
+HOST = "127.0.0.1"
+USER = "lynn"
+PASSWD = "Pusyux8484"
 
-DATABASE = ""
+DATABASE = "ecommerce"
