@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+body {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  width: 100vw;
+  height: auto;
+  color: #fff;
+}
+main {
+  margin-top: 60px;
+  padding-top: 20px;
+}
+button,
+a.btn {
+  border: none;
+  border-radius: 7px;
+  background: #AE2946;
+  padding: 10px 15px;
+  color: var(--font-color);
+  font-weight: 700;
+}
+button:hover,
+a.btn:hover {
+  background: #aa3f56;
+  color: var(--font-color);
+}
+navbar {
+  user-select: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0 20px;
+  width: 100vw;
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: var(--bg1);
+}
+navbar a.logo {
+  width: 20%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-transform: uppercase;
+  font-weight: 300;
+  font-size: 0.8em;
+  text-decoration: none;
+  color: #A2B4D0;
+}
+navbar a.logo p {
+  margin: auto 20px;
+}
+navbar a.logo p em {
+  text-transform: none;
+}
+navbar a.logo svg {
+  height: 40px;
+  width: auto;
+}
+navbar .links {
+  margin: auto;
+}
+navbar .links a {
+  margin: auto 0;
+  padding: 0 5px;
+  color: #CDD2D7;
+  text-decoration: none;
+}
+navbar .links a:hover {
+  color: #fff;
+}
+navbar .right {
+  width: 20%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+navbar .right svg {
+  height: 40px;
+  margin: auto 10px;
+}
+navbar .right button {
+  margin-right: auto;
+}
+navbar .right .theme_switcher {
+  margin: auto 20px;
+  display: flex;
+}
+navbar .right .theme_switcher input[type=checkbox] {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+navbar .right .theme_switcher label {
+  cursor: pointer;
+  text-indent: -9999px;
+  width: 60px;
+  height: 30px;
+  background: grey;
+  display: block;
+  border-radius: 30px;
+  position: relative;
+}
+navbar .right .theme_switcher label:after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+navbar .right .theme_switcher label:active:after {
+  width: 60px;
+}
+navbar .right .theme_switcher input:checked + label:after {
+  left: calc(100% - 5px);
+  transform: translateX(-100%);
+}
+/*# sourceMappingURL=base.css.map */

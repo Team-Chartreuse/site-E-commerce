@@ -1,0 +1,170 @@
+@import (css) url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+@main_color: #AE2946;
+@second_color: #aa3f56;
+@title_color: #A2B4D0;
+
+@font_color: #fff;
+@second_font_color: #CDD2D7;
+
+@navbar_height: 60px;
+
+body {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+
+  width: 100vw;
+  height: auto;
+
+  color: @font_color;
+}
+
+main {
+  margin-top: @navbar_height;
+  padding-top: 20px;
+}
+
+button, a.btn {
+  border: none;
+  border-radius: 7px;
+
+  background: @main_color;
+  padding: 10px 15px;
+
+  color: var(--font-color);
+
+  font-weight: 700;
+
+  &:hover {
+    background: @second_color;
+    color: var(--font-color)
+  }
+}
+
+navbar {
+  user-select: none;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  padding: 0 20px;
+  width: 100vw;
+  height: @navbar_height;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  background: var(--bg1);
+
+  @side: 20%;
+
+  a.logo {
+    width: @side;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 0.8em;
+
+    text-decoration: none;
+    color: @title_color;
+
+    p {
+      margin: auto 20px;
+
+      em {
+        text-transform: none;
+      }
+    }
+
+    svg {
+      height: 40px;
+      width: auto;
+    }
+  }
+
+  .links {
+    margin: auto;
+
+    a {
+      margin: auto 0;
+      padding: 0 5px;
+
+      color: @second_font_color;
+      text-decoration: none;
+
+      &:hover {
+        color: @font_color;
+      }
+    }
+  }
+
+  .right {
+    width: @side;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+
+    svg {
+      height: 40px;
+      margin: auto 10px;
+    }
+
+    button {
+      margin-right: auto;
+    }
+
+    .theme_switcher {
+      @width: 60px;
+      @height: 30px;
+      @ball_size: 20px;
+
+      margin: auto 20px;
+      display: flex;
+
+      input[type=checkbox] {
+        height: 0;
+        width: 0;
+        visibility: hidden;
+      }
+
+      label {
+        cursor: pointer;
+        text-indent: -9999px;
+        width: @width;
+        height: @height;
+        background: grey;
+        display: block;
+        border-radius: @height;
+        position: relative;
+
+        &:after {
+          content: "";
+          position: absolute;
+          top: 5px;
+          left: 5px;
+          width: @ball_size;
+          height: @ball_size;
+          background: #fff;
+          border-radius: 50%;
+          transition: 0.3s;
+        }
+
+        &:active:after {
+          width: @width;
+        }
+      }
+
+      input:checked + label:after {
+        left: calc(100% - 5px);
+        transform: translateX(-100%);
+      }
+    }
+  }
+}
