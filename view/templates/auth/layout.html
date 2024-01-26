@@ -16,14 +16,16 @@
 
 {% include('auth/_nav.html') %}
 
-<main class="container">
+<main>
     {% block body %}
     <h4>templates/auth/layout.html</h4>
     <h2>Site de vente : projet SAE S2 BDD</h2>
     <br><br>
     <a href="/base/init">init.</a>
     {% endblock %}
-</main><!-- /.container -->
+</main>
+
+{% include('_footer.html') %}
 
 <script src="{{ url_for('static', filename='scripts/navbar.js') }}" ></script>
 {% block javascripts %}

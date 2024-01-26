@@ -1,23 +1,24 @@
-* {
+
+body {
     --bg1: #151515;
     --bg2: #222222;
 
     --font-color: #fff;
-}
+    --title-color: #A2B4D0;
+    --second-font-color: #CDD2D7;
 
-body {
     background: var(--bg2);
+    color: var(--font-color);
 
-    color: var(--font-color)
+    margin: 0;
+    padding: 0;
 }
 
 body.light {
     --bg1: #DEDEDE;
     --bg2: #FDFDFD;
 
+    --title-color: #393E46;
     --font-color: #000;
-}
-
-body.light navbar {
-    background: #DEDEDE !important;
+    --second-font-color: #333639;
 }

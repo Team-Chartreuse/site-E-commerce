@@ -4,19 +4,22 @@ body {
   font-optical-sizing: auto;
   width: 100vw;
   height: auto;
-  color: #fff;
+  color: var(--font-color);
 }
 main {
   margin-top: 60px;
   padding-top: 20px;
+  min-height: calc(100vh - 60px - 200px);
 }
 button,
 a.btn {
   border: none;
   border-radius: 7px;
+  text-decoration: none;
   background: #AE2946;
   padding: 10px 15px;
-  color: var(--font-color);
+  color: #fff;
+  cursor: pointer;
   font-weight: 700;
 }
 button:hover,
@@ -46,7 +49,7 @@ navbar a.logo {
   font-weight: 300;
   font-size: 0.8em;
   text-decoration: none;
-  color: #A2B4D0;
+  color: var(--title-color);
 }
 navbar a.logo p {
   margin: auto 20px;
@@ -64,11 +67,11 @@ navbar .links {
 navbar .links a {
   margin: auto 0;
   padding: 0 5px;
-  color: #CDD2D7;
+  color: var(--second-font_color);
   text-decoration: none;
 }
 navbar .links a:hover {
-  color: #fff;
+  color: var(--font-color);
 }
 navbar .right {
   width: 20%;
@@ -119,5 +122,93 @@ navbar .right .theme_switcher label:active:after {
 navbar .right .theme_switcher input:checked + label:after {
   left: calc(100% - 5px);
   transform: translateX(-100%);
+}
+footer {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 200px;
+  background: var(--bg1);
+}
+footer .logo,
+footer .center,
+footer .legal {
+  width: calc(100% / 3);
+}
+footer .logo {
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-transform: uppercase;
+  font-weight: 300;
+  font-size: 0.8em;
+  text-decoration: none;
+  color: var(--title-color);
+}
+footer .logo p {
+  margin: 20px auto;
+}
+footer .logo p em {
+  text-transform: none;
+}
+footer .logo svg {
+  height: 40px;
+  width: auto;
+}
+footer .center {
+  color: var(--second-font-color);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.8em;
+  text-align: center;
+  margin: auto 0;
+}
+footer .center p:first-child {
+  margin: auto;
+}
+footer .center .copyright {
+  margin: 0 auto 20px auto;
+}
+footer .legal {
+  margin: auto 0;
+  padding: 0 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+footer .legal h3 {
+  font-size: 1.2em;
+  font-weight: 700;
+  margin: 7px 0;
+}
+footer .legal a {
+  color: var(--second-font-color);
+  text-decoration: none;
+  font-size: 0.9em;
+  margin: 3px 0;
+}
+input {
+  padding: 10px 15px;
+  background: var(--bg2);
+  border: none;
+  border-radius: 9px;
+  outline: none;
+  color: var(--font-color);
+}
+input::placeholder {
+  color: rgba(var(--font-color), 0.5);
+  font-size: 0.9em;
+}
+form .info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+form .info label {
+  margin: 10px auto;
+  font-weight: 600;
 }
 /*# sourceMappingURL=base.css.map */

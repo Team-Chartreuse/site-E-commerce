@@ -1,0 +1,36 @@
+{% extends 'auth/layout.html' %}
+
+{% block body %}
+<div class="left">
+    <img src="{{ url_for('static', filename='svg/colors.svg') }}" alt="etoile">
+</div>
+<div class="right">
+    <form class="block">
+        <h1>Inscription</h1>
+
+        <div class="info">
+            <label for="id">Identifiant</label>
+            <input id="id"
+                   placeholder="Votre identifiant"
+                   name="identifiant"
+                   type="text">
+        </div>
+
+        <div class="info">
+            <label for="password">Mot de passe</label>
+            <input id="password"
+                   placeholder="Votre mot de passe"
+                   name="password"
+                   type="text">
+        </div>
+
+        <button type="submit">M'inscrire</button>
+
+        <a href="/auth/login">J'ai déjà un compte</a>
+    </form>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/auth.css') }}" >
+{% endblock %}
