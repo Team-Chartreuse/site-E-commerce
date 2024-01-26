@@ -8,8 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from connexion_db import get_db
 
 auth_security = Blueprint('auth_security', __name__,
-                          template_folder='templates')
-
+                        template_folder='templates')
 
 @auth_security.route('/login')
 def auth_login():
@@ -22,7 +21,7 @@ def auth_login_post():
     login = request.form.get('login')
     password = request.form.get('password')
     tuple_select = (login)
-    sql = " requete_auth_security_1 "
+    sql = " select * from utilisateur where login=%s; "
     retour = mycursor.execute(sql, (login))
     user = mycursor.fetchone()
     if user:
@@ -43,7 +42,6 @@ def auth_login_post():
         flash(u'Vérifier votre login et essayer encore.', 'alert-warning')
         return redirect('/login')
 
-
 @auth_security.route('/signup')
 def auth_signup():
     return render_template('auth/signup.html')
@@ -56,7 +54,7 @@ def auth_signup_post():
     login = request.form.get('login')
     password = request.form.get('password')
     tuple_select = (login, email)
-    sql = "SELECT * FROM utilisateur WHERE login=%s OR email=%s;"
+    sql = " select * from utilisateur where login=%s or email=%s;  "
     retour = mycursor.execute(sql, tuple_select)
     user = mycursor.fetchone()
     if user:
@@ -64,12 +62,12 @@ def auth_signup_post():
         return redirect('/signup')
 
     # ajouter un nouveau user
-    password = generate_password_hash(password, method='sha256')
+    password = generate_password_hash(password, method='pbkdf2:sha256')
     tuple_insert = (login, email, password, 'ROLE_client')
-    sql = """  requete_auth_security_3  """
+    sql = """INSERT INTO utilisateur(login, email, password, role) VALUES (%s, %s, %s, %s);"""
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
-    sql = """  requete_auth_security_4  """
+    sql = """SELECT last_insert_id() AS last_insert_id;"""
     mycursor.execute(sql)
     info_last_id = mycursor.fetchone()
     id_user = info_last_id['last_insert_id']
@@ -90,7 +88,7 @@ def auth_logout():
     session.pop('id_user', None)
     return redirect('/')
 
-
 @auth_security.route('/forget-password', methods=['GET'])
 def forget_password():
     return render_template('auth/forget_password.html')
+
