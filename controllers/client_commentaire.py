@@ -44,11 +44,12 @@ def client_article_details():
     mycursor.execute(sql, id_article)
     article = mycursor.fetchone()
 
-    commandes_articles=[]
-    nb_commentaires=[]
+    commandes_articles = []
+    nb_commentaires = []
+
     if article is None:
         abort(404, "pb id article")
-    # sql = '''
+    # sql = ''' 
     #
     # '''
     # mycursor.execute(sql, ( id_article))

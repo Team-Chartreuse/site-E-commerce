@@ -44,7 +44,22 @@ def client_article_show():                                 # remplace client_ind
     print(articles)
 
     # pour le filtre
-    types_article = []
+    sql2 = '''
+    SELECT 
+        id_couleur,
+        nom_couleur AS libelle
+    FROM couleur;
+    '''
+    mycursor.execute(sql2)
+    types_couleur = mycursor.fetchall()
+    sql2 = '''
+    SELECT 
+        id_categorie,
+        nom_categorie AS libelle
+    FROM categorie;
+    '''
+    mycursor.execute(sql2)
+    categorie = mycursor.fetchall()
 
     articles_panier = []
 
@@ -57,5 +72,6 @@ def client_article_show():                                 # remplace client_ind
                            , articles=articles
                            , articles_panier=articles_panier
                            #, prix_total=prix_total
-                           , items_filtre=types_article
+                           , items_filtre=types_couleur
+                           , items_filtre2=categorie
                            )
