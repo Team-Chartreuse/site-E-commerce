@@ -21,10 +21,29 @@ def client_article_details():
     # client_historique_add(id_article, id_client)
 
     sql = '''
+    SELECT
+        id_peinture AS id_article,
+        nom_peinture AS nom,
+        volume_pot,
+        numero_melange,
+        prix_peinture AS prix,
+        couleur_id,
+        categorie_id,
+        fournisseur,
+        marque,
+        image,
+        nom_couleur,
+        nom_categorie
+    FROM peinture
+    JOIN couleur
+    ON peinture.couleur_id = couleur.id_couleur
+    JOIN categorie
+    ON peinture.categorie_id = categorie.id_categorie
+    WHERE id_peinture = %s;
     '''
-    #mycursor.execute(sql, id_article)
-    #article = mycursor.fetchone()
-    article=[]
+    mycursor.execute(sql, id_article)
+    article = mycursor.fetchone()
+
     commandes_articles=[]
     nb_commentaires=[]
     if article is None:
