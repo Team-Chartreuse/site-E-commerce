@@ -43,6 +43,7 @@ def client_article_details():
     '''
     mycursor.execute(sql, id_article)
     article = mycursor.fetchone()
+    article['description'] = f"{article['nom']} / {article['nom_couleur']} / {article['nom_categorie']}"
 
     commandes_articles = []
     nb_commentaires = []

@@ -140,8 +140,12 @@ def fct_fixtures_load():
      '''
     mycursor.execute(sql)
     sql = ''' 
-    INSERT INTO commande 
-                 '''
+    INSERT INTO commande (date_achat, utilisateur_id, etat_id)
+    VALUES
+        ('2024-01-26', 1, 1),
+        ('2024-01-27', 2, 2),
+        ('2024-01-28', 3, 3);
+    '''
     mycursor.execute(sql)
 
     sql = ''' 
@@ -157,7 +161,11 @@ def fct_fixtures_load():
          '''
     mycursor.execute(sql)
     sql = ''' 
-    INSERT INTO ligne_commande 
+    INSERT INTO ligne_commande (commande_id, peinture_id, prix, quantite)
+    VALUES
+        (1, 1, 25.99, 2),
+        (2, 2, 15.50, 1),
+        (3, 3, 30.75, 3);
     '''
     mycursor.execute(sql)
 
