@@ -8,23 +8,58 @@ from connexion_db import get_db
 client_article = Blueprint('client_article', __name__,
                         template_folder='templates')
 
+
 @client_article.route('/client/index')
 @client_article.route('/client/article/show')              # remplace /client
 def client_article_show():                                 # remplace client_index
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
-    sql = '''   selection des articles   '''
+    sql = '''
+    SELECT
+        id_peinture AS id_article,
+        nom_peinture AS nom,
+        volume_pot,
+        numero_melange,
+        prix_peinture AS prix,
+        couleur_id,
+        categorie_id,
+        fournisseur,
+        marque,
+        image,
+        nom_couleur,
+        nom_categorie
+    FROM peinture
+    JOIN couleur
+    ON peinture.couleur_id = couleur.id_couleur
+    JOIN categorie
+    ON peinture.categorie_id = categorie.id_categorie;
+    '''
     list_param = []
     condition_and = ""
     # utilisation du filtre
-    sql3=''' prise en compte des commentaires et des notes dans le SQL    '''
-    articles =[]
-
+    sql3 = ''' prise en compte des commentaires et des notes dans le SQL    '''
+    mycursor.execute(sql)
+    articles = mycursor.fetchall()
+    print(articles)
 
     # pour le filtre
-    types_article = []
-
+    sql2 = '''
+    SELECT 
+        id_couleur,
+        nom_couleur AS libelle
+    FROM couleur;
+    '''
+    mycursor.execute(sql2)
+    types_couleur = mycursor.fetchall()
+    sql2 = '''
+    SELECT 
+        id_categorie,
+        nom_categorie AS libelle
+    FROM categorie;
+    '''
+    mycursor.execute(sql2)
+    categorie = mycursor.fetchall()
 
     articles_panier = []
 
@@ -37,5 +72,6 @@ def client_article_show():                                 # remplace client_ind
                            , articles=articles
                            , articles_panier=articles_panier
                            #, prix_total=prix_total
-                           , items_filtre=types_article
+                           , items_filtre=types_couleur
+                           , items_filtre2=categorie
                            )
