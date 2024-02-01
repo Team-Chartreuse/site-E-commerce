@@ -3,35 +3,39 @@
         <input name="filter_word"  type="text" placeholder="Recherche" size="10" class="form-control"
                value="{% if session['filter_word'] %}{{ session['filter_word'] }}{% endif %}"  >
     </div>
-   {% if items_filtre is defined %}
+   {% if filtre_couleur is defined %}
     <div class="form-group">
         <h4>Couleurs :</h4>
-        {% for item_filtre in items_filtre %}
-        <input type="checkbox" name="filter_types" value="{{ item_filtre.id_couleur }}"
+        {% for item_filtre in filtre_couleur %}
+        <input type="checkbox" name="filter_couleur" value="{{ item_filtre.id_couleur }}"
                {% set id_item = item_filtre.id_couleur | string %}
-               {% if session['filter_types'] %}
+               {% if session['filter_couleur'] %}
 {#                   {%  if idItem in session['filter_types'] %} checked  {% endif %} #}
-                   {{ ' checked ' if (id_item in session['filter_types']) else '' }}
+                   {{ ' checked ' if (id_item in session['filter_couleur']) else '' }}
                {% endif %}
 {#                https://stackoverflow.com/questions/58433775/how-to-access-the-value-of-each-checkbox-in-a-table-with-flask#}
-            >  {{ item_filtre.libelle }}
+            >{{ item_filtre.libelle }}
             <br/>
         {% endfor %}
     </div>
     {% endif %}
 
-    {% if items_filtre2 is defined %}
+    {# filtre_couleur=types_couleur
+    {# filtre_categorie=categorie #}
+
+    {% if filtre_categorie is defined %}
     <div class="form-group">
         <h4>Catégorie :</h4>
-        {% for item_filtre in items_filtre2 %}
-        <input type="checkbox" name="filter_types" value="{{ item_filtre.id_categorie }}"
+        {% for item_filtre in filtre_categorie %}
+        <input type="checkbox" name="filter_categorie" value="{{ item_filtre.id_categorie }}"
                {% set id_item = item_filtre.id_categorie | string %}
-               {% if session['filter_types'] %}
+               {% if session['filter_categorie'] %}
 {#                   {%  if idItem in session['filter_types'] %} checked  {% endif %} #}
-                   {{ ' checked ' if (id_item in session['filter_types']) else '' }}
+                   {{ ' checked ' if (id_item in session['filter_categorie']) else '' }}
                {% endif %}
 {#                https://stackoverflow.com/questions/58433775/how-to-access-the-value-of-each-checkbox-in-a-table-with-flask#}
-            >  {{ item_filtre.libelle }}
+            >
+            {{ item_filtre.libelle }}
             <br/>
         {% endfor %}
     </div>
@@ -39,15 +43,15 @@
 
     <div class="form-group">
         <h5>Prix :</h5>
-         <input name="filter_prix_min"  type="text" placeholder="min"  size="3"
+         <input name="filter_prix_min"  type="number" placeholder="min"  size="3"
             value="{% if session['filter_prix_min'] %}{{ session['filter_prix_min'] }}{% endif %}" >
 
-       <input name="filter_prix_max"  type="text" placeholder="max"  size="3"
+       <input name="filter_prix_max"  type="number" placeholder="max"  size="3"
              value="{% if session['filter_prix_max'] %}{{ session['filter_prix_max'] }}{% endif %}" >
     </div>
     <button type="submit" class="btn btn-primary" style="display: inline-block;">Filtrer</button>
 </form>
-{% if session['filter_word'] or session['filter_prix_max'] or session['filter_prix_min'] or session['filter_types']%}
+{% if session['filter_word'] or session['filter_prix_max'] or session['filter_prix_min'] or session['filter_categorie'] or session['filter_couleur'] %}
 <form  action="/client/panier/filtre/suppr"  style="display: inline-block; margin: 5px;"  method="post" >
 <button class="btn btn-primary" > Supprimer filtre </button>
 </form>

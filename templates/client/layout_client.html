@@ -17,8 +17,7 @@
     <h4 style="color:blue">page Client : templates\admin\layout_client.html</h4>
     <h3 style="color: blue">Bonjour {{ session['login'] }} , votre Rôle : {{ session['role'] }}</h3>
 {% endblock %}
-</div>
-{% block javascripts %}
+</div>{% block javascripts %}
     <script src="{{ url_for('static', filename='assets/js/bootstrap.bundle.js') }}" ></script>
 {% endblock %}
 </body>
