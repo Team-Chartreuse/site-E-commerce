@@ -14,11 +14,14 @@ client_commande = Blueprint('client_commande', __name__,
 def client_commande_valide():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    sql = ''' selection des articles d'un panier 
+    sql = ''' SELECT * FROM ligne_panier
+              WHERE utilisateur_id = %s; 
     '''
     articles_panier = []
     if len(articles_panier) >= 1:
-        sql = ''' calcul du prix total du panier '''
+        sql = ''' SELECT SUM(prix_peinture * ligne_panier.quantite) FROM peinture
+                  JOIN ligne_panier ON ligne_panier.peinture_id = peinture.id_peinture
+                  GROUP BY id_peinture;'''
         prix_total = None
     else:
         prix_total = None
@@ -39,7 +42,8 @@ def client_commande_add():
     # choix de(s) (l')adresse(s)
 
     id_client = session['id_user']
-    sql = ''' selection du contenu du panier de l'utilisateur '''
+    sql = ''' SELECT * FROM ligne_panier
+              WHERE utilisateur_id = %s'''
     items_ligne_panier = []
     # if items_ligne_panier is None or len(items_ligne_panier) < 1:
     #     flash(u'Pas d\'articles dans le ligne_panier', 'alert-warning')
@@ -47,7 +51,7 @@ def client_commande_add():
                                            # https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
     #a = datetime.strptime('my date', "%b %d %Y %H:%M")
 
-    sql = ''' creation de la commande '''
+    sql = ''' INSERT INTO commande(date_achat, utilisateur_id, etat_id) VALUE (%s, %s, %s)'''
 
     sql = '''SELECT last_insert_id() as last_insert_id'''
     # numéro de la dernière commande

@@ -24,7 +24,7 @@
                             <td>{{ "{:,.2f} €".format((item_panier.prix * item_panier.quantite)) }}{#{(panier.article.prix * panier.quantite)|number_format(2) }#}</td>
                             <td>
 {# #}                            {% if item_panier.stock is defined %}
-{# #}                               {% if item_panier.stock > 0 and item_panier.quantite < item_panier.stock %}
+{# #}                               {% if item_panier.stock > 0 %}
                                 <form action="/client/panier/add"  style="display: inline-block;"  method="post">
 {# #}                                   <input type="hidden" name="id_declinaison_article" value="{{ item_panier.id_declinaison_article }}">
                                         <input type="hidden" name="quantite" value="1">

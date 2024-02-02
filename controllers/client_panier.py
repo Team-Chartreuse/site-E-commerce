@@ -52,12 +52,12 @@ WHERE
     is_article_already_in = len(mycursor.fetchall()) > 0
 
     if is_article_already_in:
-        sql = '''UPDATE ligne_panier SET quantite = quantite + 1 WHERE utilisateur_id = %s AND peinture_id = %s;'''
-        mycursor.execute(sql, (id_client, id_article))
+        sql = '''UPDATE ligne_panier SET quantite = quantite + %s WHERE utilisateur_id = %s AND peinture_id = %s;'''
+        mycursor.execute(sql, (quantite, id_client, id_article))
 
         # Retirer un article du stock
-        sql = '''UPDATE peinture SET stock = stock - 1 WHERE id_peinture = %s;'''
-        mycursor.execute(sql, id_article)
+        sql = '''UPDATE peinture SET stock = stock - %s WHERE id_peinture = %s;'''
+        mycursor.execute(sql, (quantite, id_article))
     else:
         sql = "INSERT INTO ligne_panier (utilisateur_id, peinture_id, quantite, date_ajout) VALUE  (%s, %s, %s, NOW());"
         mycursor.execute(sql, (id_client, id_article, quantite))
@@ -97,9 +97,16 @@ WHERE
     if not (article_panier is None) and int(article_panier['quantite']) > 1:
         sql = '''UPDATE ligne_panier SET quantite = quantite - 1 WHERE utilisateur_id = %s AND peinture_id = %s;'''
         mycursor.execute(sql, (id_client, id_article))
+
+        # mise à jour du stock de l'article disponible
+        sql = '''UPDATE peinture SET stock = stock + 1 WHERE id_peinture = %s;'''
+        mycursor.execute(sql, id_article)
     else:
         sql = '''DELETE FROM ligne_panier WHERE utilisateur_id = %s AND peinture_id = %s;'''
         mycursor.execute(sql, (id_client, id_article))
+
+        sql = '''UPDATE peinture SET stock = stock + %s WHERE id_peinture = %s;'''
+        mycursor.execute(sql, (quantite, id_article))
 
     # mise à jour du stock de l'article disponible
     get_db().commit()
