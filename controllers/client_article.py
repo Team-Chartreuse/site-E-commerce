@@ -87,7 +87,7 @@ def client_article_show():             # remplace client_index
     p.nom_peinture AS nom
 FROM
     ligne_panier l
-LEFT JOIN ecommerce.peinture p on l.peinture_id = p.id_peinture
+LEFT JOIN peinture p on l.peinture_id = p.id_peinture
 WHERE
     l.utilisateur_id = %s;'''
 
@@ -100,7 +100,7 @@ WHERE
     SUM(p.prix_peinture * l.quantite) as total
 FROM
     ligne_panier l
-LEFT JOIN ecommerce.peinture p on l.peinture_id = p.id_peinture
+LEFT JOIN peinture p on l.peinture_id = p.id_peinture
 WHERE
     l.utilisateur_id = %s;'''
 
