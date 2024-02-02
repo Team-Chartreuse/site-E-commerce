@@ -51,31 +51,6 @@ CREATE TABLE IF NOT EXISTS utilisateur (
 
     PRIMARY KEY (id_utilisateur)
 );
-#        Emails limitations:
-# Section 3 says: (from erratum 1003) In addition to restrictions on syntax, there is a length limit on email addresses.
-# That limit is a maximum of 64 characters (octets) in the "local part" (before the "@") and a maximum of 255
-# characters (octets) in the domain part (after the "@") for a total length of 320 characters.
-
-
-#     Remplacer le nom de la table article par celui de votre sujet.
-#     Créer la table qui permettra de définir la déclinaison de l’article
-#     Remplacer l’attribut article_id par celui de votre sujet dans le schéma ci-dessus.
-#     Créer une table type_article (en modifiant le nom par celui du sujet)
-#     Ajouter des attributs dans la table principale
-#     L’état de la commande peut être selon le sujet, “en attente”, “expédié”, “validé”, “confirmé”
-#
-#
-#     Le système doit disposer d’un système de panier stocké dans une base de données avant la confirmation de la commande (et non en “session”)
-#
-#
-#     Rechercher les clés primaires dans le schéma ci-dessus.
-#     Modifier le schéma avec les éléments de votre sujet en vous inspirant d’exemples sur internet
-
-# utilisateur (id_utilisateur, login, email, nom, password, role)
-# commande (id_commande, date_achat, #utilisateur_id, #etat_id)
-# ligne_commande ( #commande_id , #peinture_id , prix, quantite)
-# ligne_panier (#utilisateur_id , #peinture_id, quantite, date_ajout)
-# etat (id_etat, libelle )
 
 CREATE TABLE IF NOT EXISTS etat (
     id_etat INT AUTO_INCREMENT,
