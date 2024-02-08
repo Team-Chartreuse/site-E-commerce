@@ -143,7 +143,7 @@ def client_commande_show():
             peinture.nom_peinture AS nom,
             quantite,
             ligne_commande.prix,
-            peinture.prix_peinture AS prix_ligne,
+            (peinture.prix_peinture * quantite) AS prix_ligne,
             categorie.id_categorie,
             categorie.nom_categorie,
             couleur.id_couleur,

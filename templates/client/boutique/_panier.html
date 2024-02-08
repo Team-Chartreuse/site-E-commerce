@@ -12,7 +12,7 @@
                     {% for item_panier in articles_panier %}
                         <tr>
                             <td>{{item_panier.nom}}
-                            {% if item_panier.id_couleur is defined and item_panier.id_couleur != None and item_panier.id_couleur >1 %}
+                            {% if item_panier.id_couleur is defined and item_panier.id_couleur != None %}
                                 <small style="color: #6dcea2">({{ item_panier.libelle_couleur }})</small>
                             {% endif %}
                             {% if item_panier.id_categorie is defined and item_panier.id_categorie  != None and item_panier.id_categorie >1 %}
