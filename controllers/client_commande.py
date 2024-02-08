@@ -140,16 +140,24 @@ def client_commande_show():
         print(id_commande)
         sql = '''
         SELECT
-            nom_peinture AS nom,
+            peinture.nom_peinture AS nom,
             quantite,
-            prix,
-            prix_peinture AS prix_ligne
+            ligne_commande.prix,
+            peinture.prix_peinture AS prix_ligne,
+            categorie.id_categorie,
+            categorie.nom_categorie,
+            couleur.id_couleur,
+            couleur.nom_couleur
         FROM ligne_commande
         JOIN peinture ON ligne_commande.peinture_id = peinture.id_peinture
+        JOIN categorie ON peinture.categorie_id = categorie.id_categorie
+        JOIN couleur ON peinture.couleur_id = couleur.id_couleur
         WHERE commande_id = %s
         '''
         mycursor.execute(sql, id_commande)
         articles_commande = mycursor.fetchall()
+        for article in articles_commande:
+            article['nb_declinaisons'] = 2
 
         # partie 2 : selection de l'adresse de livraison et de facturation de la commande selectionnée
         sql = ''' selection des adressses '''
