@@ -57,7 +57,6 @@ def client_article_show():             # remplace client_index
         condition_and = " WHERE " + " AND ".join(condition)
     # utilisation du filtre
     sql3 = ''' prise en compte des commentaires et des notes dans le SQL    '''  # TODO
-    print(sql+condition_and, list_param)
     mycursor.execute(sql+condition_and, tuple(list_param))
     articles = mycursor.fetchall()
 
