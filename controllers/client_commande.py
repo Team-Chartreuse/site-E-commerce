@@ -137,7 +137,6 @@ def client_commande_show():
     commande_adresses = None
     id_commande = request.args.get('id_commande', None)
     if id_commande is not None:
-        print(id_commande)
         sql = '''
         SELECT
             peinture.nom_peinture AS nom,
