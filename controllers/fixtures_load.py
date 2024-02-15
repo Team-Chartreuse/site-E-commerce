@@ -163,5 +163,7 @@ def fct_fixtures_load():
 '''
     mycursor.execute(sql)
 
+    mycursor.execute('''ALTER TABLE peinture ADD COLUMN description VARCHAR(1024);''')
+
     get_db().commit()
     return redirect('/')

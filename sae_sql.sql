@@ -89,6 +89,8 @@ CREATE TABLE IF NOT EXISTS ligne_panier (
     FOREIGN KEY (peinture_id) REFERENCES peinture(id_peinture)
 );
 
+ALTER TABLE peinture ADD COLUMN description VARCHAR(1024);
+
 # États possibles
 INSERT INTO etat (libelle) VALUES ('en attente'), ('expédié'), ('validé'), ('confirmé');
 

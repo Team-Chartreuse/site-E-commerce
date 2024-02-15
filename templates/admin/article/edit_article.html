@@ -36,6 +36,7 @@ types_article : tableau de dictionnaires
                     </label>                                         {# à modifier #}
 {#                https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask#}
 
+
                 <label for="type_article_id">Type de l'article :
                     <select name="type_article_id" class="form-select">
                             {% for type in types_article %}
@@ -46,6 +47,11 @@ types_article : tableau de dictionnaires
                     <label for="description">Description :
                         <input name="description" type="text" value="{{ article.description }}" class="form-control">
                     </label>
+
+                    <label for="stock" > Stock :
+                        <input name="stock" type="number" min="0" step="1" value="{{ article.stock }}" class="form-control" >
+                    </label>
+
                     <button class="btn btn-primary mt-2">
                                 Modifier
                     </button>
