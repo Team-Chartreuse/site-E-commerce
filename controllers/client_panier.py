@@ -176,10 +176,9 @@ def client_panier_filtre():
         session['filter_prix_min'] = filter_prix_min
     if filter_prix_max:
         session['filter_prix_max'] = filter_prix_max
-    if len(filter_couleur) > 0:
-        session['filter_couleur'] = filter_couleur
-    if len(filter_categorie) > 0:
-        session['filter_categorie'] = filter_categorie
+
+    session['filter_couleur'] = filter_couleur
+    session['filter_categorie'] = filter_categorie
 
     return redirect('/client/article/show')
 
