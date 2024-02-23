@@ -41,6 +41,7 @@ ORDER BY e.id_etat, prix_total;'''
 
     articles_commande = None
     commande_adresses = None
+    client = None
     id_commande = request.args.get('id_commande', None)
     print("id_commande: ", id_commande)
     if id_commande:  # != None est inutile (d'après PyCharm)
@@ -59,6 +60,14 @@ ORDER BY lc.prix * lc.quantite;'''
         mycursor.execute(sql, (id_commande,))
         articles_commande = mycursor.fetchall()
 
+        sql = '''SELECT u.*
+FROM ligne_commande lc
+INNER JOIN commande c ON lc.commande_id = c.id_commande
+INNER JOIN utilisateur u ON c.utilisateur_id = u.id_utilisateur
+WHERE lc.commande_id = %s;'''
+        mycursor.execute(sql, (id_commande,))
+        client = mycursor.fetchone()
+
         commande_adresses = []
 
     print(articles_commande)
@@ -66,6 +75,7 @@ ORDER BY lc.prix * lc.quantite;'''
                            , commandes=commandes
                            , articles_commande=articles_commande
                            , commande_adresses=commande_adresses
+                           , client=client
                            )
 
 
