@@ -165,5 +165,18 @@ def fct_fixtures_load():
 
     mycursor.execute('''ALTER TABLE peinture ADD COLUMN description VARCHAR(1024);''')
 
+    sql = '''INSERT INTO commande (id_commande, date_achat, utilisateur_id, etat_id) VALUES
+    (1, DATE('2024-02-08'), 2, 2),
+    (2, DATE('2024-02-07'), 3, 1);'''
+    mycursor.execute(sql)
+
+    sql = '''INSERT INTO ligne_commande (commande_id, peinture_id, prix, quantite) VALUES
+    (2, 15, 32.99, 2),
+    (2, 5, 18.99, 3),
+    (1, 1, 25.99, 1),
+    (1, 5, 18.99, 5),
+    (1, 10, 17.50, 2);'''
+    mycursor.execute(sql)
+
     get_db().commit()
     return redirect('/')
