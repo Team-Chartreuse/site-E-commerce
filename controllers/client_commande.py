@@ -34,26 +34,17 @@ def client_commande_valide():
     mycursor.execute(sql, id_client)
     articles_panier = mycursor.fetchall()
     if len(articles_panier) >= 1:
-        # sql = '''
-        # SELECT SUM(prix_peinture * ligne_panier.quantite) AS prix
-        # FROM peinture
-        # JOIN ligne_panier ON ligne_panier.peinture_id = peinture.id_peinture
-        # GROUP BY id_peinture;
-        # '''
-        # mycursor.execute(sql)
-        # prix_total = mycursor.fetchone()['prix']
         prix_total = 0
         for peinture in articles_panier:
             prix_total += peinture["prix"] * peinture["quantite"]
     else:
         prix_total = None
-    # etape 2 : selection des adresses
 
-    mycursor.execute("""SELECT * FROM coordonnees WHERE client_id = %s;""", (id_client,))
+    # étape 2 : selection des adresses
+    mycursor.execute("""SELECT * FROM coordonnees WHERE client_id = %s AND valide;""", (id_client,))
     adresses = mycursor.fetchall()
 
     return render_template('client/boutique/panier_validation_adresses.html'
-                           # , adresses=adresses
                            , articles_panier=articles_panier
                            , prix_total=prix_total
                            , validation=1

@@ -19,10 +19,13 @@ def client_coordonnee_show():
     mycursor.execute("""SELECT * FROM coordonnees WHERE client_id = %s""", (id_client,))
     adresses = mycursor.fetchall()
 
+    mycursor.execute("""SELECT COUNT(*) AS t FROM coordonnees WHERE client_id = %s AND valide;""", (id_client,))
+    nb_adresses = mycursor.fetchone()["t"]
+
     return render_template('client/coordonnee/show_coordonnee.html'
                            , utilisateur=utilisateur
                            , adresses=adresses
-                           , nb_adresses=len(adresses)
+                           , nb_adresses=nb_adresses
                            )
 
 
@@ -77,7 +80,7 @@ def client_coordonnee_delete_adresse():
     id_client = session['id_user']
     id_adresse = request.form.get('id_adresse')
 
-    mycursor.execute("""DELETE FROM coordonnees WHERE id_coordonne = %s AND client_id = %s;""", (id_adresse, id_client))
+    mycursor.execute("""UPDATE coordonnees SET valide=0 WHERE id_coordonne = %s AND client_id = %s;""", (id_adresse, id_client))
     get_db().commit()
 
     return redirect('/client/coordonnee/show')
@@ -103,19 +106,19 @@ def client_coordonnee_add_adresse_valide():
     code_postal = request.form.get('code_postal')
     ville = request.form.get('ville')
 
-    mycursor.execute("""SELECT COUNT(*) AS c FROM coordonnees WHERE client_id = %s;""", (id_client,))
+    mycursor.execute("""SELECT COUNT(*) AS c FROM coordonnees WHERE client_id = %s AND valide;""", (id_client,))
     nb_addresses = mycursor.fetchone()
 
     if nb_addresses is not None and int(nb_addresses["c"]) < 4:
         mycursor.execute(
-            """INSERT INTO coordonnees (client_id, num_rue_nom, ville, code_postal, nom_prenom)
-        VALUE (%s, %s, %s, %s, %s);""",
+            """INSERT INTO coordonnees (client_id, num_rue_nom, ville, code_postal, nom_prenom, valide)
+        VALUE (%s, %s, %s, %s, %s, true);""",
             (
                 id_client,
                 rue,
                 ville,
                 code_postal,
-                nom
+                nom,
             )
         )
         get_db().commit()
