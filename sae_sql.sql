@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS ligne_panier;
 DROP TABLE IF EXISTS ligne_commande;
 DROP TABLE IF EXISTS commande;
 DROP TABLE IF EXISTS etat;
+DROP TABLE IF EXISTS adresse_favorite;
 DROP TABLE IF EXISTS coordonnees;
 DROP TABLE IF EXISTS utilisateur;
 DROP TABLE IF EXISTS peinture;
@@ -102,9 +103,16 @@ CREATE TABLE IF NOT EXISTS coordonnees (
     ville VARCHAR(128),
     code_postal INT,
     nom_prenom VARCHAR(64),
-    valide BOOLEAN DEFAULT false,
+    valide BOOLEAN DEFAULT true,
 
     PRIMARY KEY (id_coordonne, client_id)
+);
+
+CREATE TABLE IF NOT EXISTS adresse_favorite (
+    client_id INT REFERENCES utilisateur (id_utilisateur),
+    id_coordonnee INT REFERENCES coordonnees (id_coordonne),
+
+    PRIMARY KEY (client_id)
 );
 
 #---------------------------------------------
@@ -151,4 +159,12 @@ INSERT INTO utilisateur(id_utilisateur,login,email,password,role,nom) VALUES
     'ROLE_client','client'),
     (3,'client2','client2@client2.fr',
     'pbkdf2:sha256:600000$LLJIBGNbPjJ63uJM$b774cf95df80c722d09f957b1831d82689153544916b460410e2d0de73337db0',
-    'ROLE_client','client2');
+    'ROLE_client','client2'),
+    (4,'lana','lana@chamallow.xyz',
+    'pbkdf2:sha256:600000$dYjw0xxqdHAIA1GO$eaef95ecf21a51f50769bb3b45cbc59edebf575bbefe91a52c16b8525a6ed3c2',
+    'ROLE_client','lana');
+
+
+INSERT INTO coordonnees (client_id, num_rue_nom, ville, code_postal, nom_prenom) VALUES
+    (4, '20 rue gresly', 'L\'Isle sur le doubs', 25250, 'Lana'),
+    (4, 'Bip', 'Paris', 20000, 'Mr personne');

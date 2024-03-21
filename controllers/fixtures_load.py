@@ -21,6 +21,7 @@ def fct_fixtures_load():
     mycursor.execute("DROP TABLE IF EXISTS peinture;")
     mycursor.execute("DROP TABLE IF EXISTS categorie;")
     mycursor.execute("DROP TABLE IF EXISTS couleur;")
+    mycursor.execute("DROP TABLE IF EXISTS adresse_favorite;")
 
 
     sql = '''CREATE TABLE IF NOT EXISTS categorie (
@@ -120,9 +121,17 @@ def fct_fixtures_load():
     ville VARCHAR(128),
     code_postal INT,
     nom_prenom VARCHAR(64),
-    valide BOOLEAN DEFAULT false,
+    valide BOOLEAN DEFAULT true,
 
     PRIMARY KEY (id_coordonne, client_id)
+);"""
+    mycursor.execute(sql)
+
+    sql = """CREATE TABLE IF NOT EXISTS adresse_favorite (
+    client_id INT REFERENCES utilisateur (id_utilisateur),
+    id_coordonnee INT REFERENCES coordonnees (id_coordonne),
+
+    PRIMARY KEY (client_id)
 );"""
     mycursor.execute(sql)
 
@@ -173,8 +182,15 @@ def fct_fixtures_load():
     'ROLE_client','client'),
     (3,'client2','client2@client2.fr',
     'pbkdf2:sha256:600000$LLJIBGNbPjJ63uJM$b774cf95df80c722d09f957b1831d82689153544916b460410e2d0de73337db0',
-    'ROLE_client','client2');
-'''
+    'ROLE_client','client2'),
+    (4,'lana','lana@chamallow.xyz',
+    'pbkdf2:sha256:600000$dYjw0xxqdHAIA1GO$eaef95ecf21a51f50769bb3b45cbc59edebf575bbefe91a52c16b8525a6ed3c2',
+    'ROLE_client','lana');'''
+    mycursor.execute(sql)
+
+    sql = """INSERT INTO coordonnees (client_id, num_rue_nom, ville, code_postal, nom_prenom) VALUES
+    (4, '20 rue gresly', 'L\\'Isle sur le doubs', 25250, 'Lana'),
+    (4, 'Bip', 'Paris', 20000, 'Mr personne');"""
     mycursor.execute(sql)
 
     mycursor.execute('''ALTER TABLE peinture ADD COLUMN description VARCHAR(1024);''')

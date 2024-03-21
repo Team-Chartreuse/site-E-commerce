@@ -11,7 +11,7 @@
 7.  [ ] (ADMIN) si l’administrateur consulte une commande il peut voir l’adresse d’expédition et l’adresse de facturation
 8.  [ ] VISUALISATION de données sur les ventes (nombre de commandes, Chiffre d'affaires / départements …)
 9.  [ ] **Le nombre de commandes par adresse ainsi que l’adresse favorite est indiquée dans le tableau des adresses.**
-10. [x] ~~**Gestion d’une adresse supprimée utilisée dans une commande. Elle ne peut pas être supprimée mais devient non “valide”. De fait cette adresse n’est plus utilisable et n’est plus comptée dans les adresses.**~~
+10. [x] ~~**Gestion d’une adresse supprimée utilisée dans une commande. Elle ne peut pas être supprimée, mais devient non “valide”. De fait cette adresse n’est plus utilisable et n’est plus comptée dans les adresses.**~~
 11. [ ] **Gestion de la modification d’une adresse. Une adresse utilisée pour une commande ne peut pas être modifiée, cette adresse devient non “valide”. De fait cette adresse n’est plus utilisable et n’est plus comptée dans les adresses. Cependant un doublon (une nouvelle adresse) est créée avec les nouvelles informations**
 12. [ ] **Re-proposer par défaut la dernière adresse utilisée comme adresse de livraison dans les listes déroulantes des adresses lors du passage d’une commande(l’adresse devient “favorite”)**
 13. [ ] **Conserver les adresses utilisées dans les factures même si on modifie l’une de ces adresses**
