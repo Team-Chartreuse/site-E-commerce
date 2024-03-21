@@ -15,14 +15,14 @@
                         <option value="">Sélectionner l'adresse de facturation</option>
                         {% for adresse  in adresses %}
 
-                             <option value="{{ adresse.id_adresse }}"
-                             {% if id_adresse_fav != 0 and id_adresse_fav == adresse.id_adresse %}
+                             <option value="{{ adresse.id_coordonne }}"
+                             {% if id_adresse_fav != 0 and id_adresse_fav == adresse.id_coordonne %}
                                  selected
                              {% endif %}
 
                              >{{ adresse.nom }} ({{ adresse.code_postal }})
                                  {{ adresse.ville }} - {{ adresse.rue }}
-                             {% if id_adresse_fav != 0 and id_adresse_fav == adresse.id_adresse %}
+                             {% if id_adresse_fav != 0 and id_adresse_fav == adresse.id_coordonne %}
                                  (f)
                              {% endif %}
 
@@ -37,8 +37,8 @@
                     <select  id="id_adresse_facturation" name="id_adresse_facturation" required class="form-select">
                         <option value="">Sélectionner l'adresse de livraison</option>
                         {% for adresse  in adresses %}
-                             <option value="{{ adresse.id_adresse }}"
-                             {% if id_adresse_fav != 0 and id_adresse_fav == adresse.id_adresse %}
+                             <option value="{{ adresse.id_coordonne }}"
+                             {% if id_adresse_fav != 0 and id_adresse_fav == adresse.id_coordonnee %}
                                  selected
                              {% endif %}
                              >{{ adresse.nom }} ({{ adresse.code_postal }})

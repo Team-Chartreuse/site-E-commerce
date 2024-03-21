@@ -59,6 +59,15 @@ def client_commande_add():
 
     # choix de(s) (l')adresse(s)
 
+    # None if not checked, a string elsewhere
+    is_adresses_different = request.form.get("adresse_identique") is None
+
+    id_adresse_facturation = request.form.get("id_adresse_facturation")
+
+    id_adresse_livraison = id_adresse_facturation
+    if is_adresses_different:
+        id_adresse_livraison = request.form.get("id_adresse_livraison")
+
     id_client = session['id_user']
     sql = '''
     SELECT 
@@ -72,6 +81,7 @@ def client_commande_add():
     WHERE utilisateur_id = %s;'''
     mycursor.execute(sql, id_client)
     items_ligne_panier = mycursor.fetchall()
+
     if items_ligne_panier is None or len(items_ligne_panier) < 1:
         flash(u'Pas d\'articles dans le ligne_panier', 'alert-warning')
         return redirect('/client/article/show')
@@ -87,8 +97,9 @@ def client_commande_add():
     mycursor.execute(etat_id)
     etat_id = mycursor.fetchone()
     print(etat_id)
-    sql = '''INSERT INTO commande(date_achat, utilisateur_id, etat_id) VALUE (%s, %s, %s);'''
-    mycursor.execute(sql, (a, id_client, etat_id['id_etat']))
+    sql = '''INSERT INTO commande(date_achat, utilisateur_id, etat_id, adresse_facturation, adresse_livraison)
+    VALUE (%s, %s, %s, %s, %s);'''
+    mycursor.execute(sql, (a, id_client, etat_id['id_etat'], id_adresse_facturation, id_adresse_livraison))
 
     sql = '''SELECT LAST_INSERT_ID() AS last_insert_id FROM commande'''
     mycursor.execute(sql)
