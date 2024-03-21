@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS ligne_panier;
 DROP TABLE IF EXISTS ligne_commande;
 DROP TABLE IF EXISTS commande;
 DROP TABLE IF EXISTS etat;
+DROP TABLE IF EXISTS coordonnees;
 DROP TABLE IF EXISTS utilisateur;
 DROP TABLE IF EXISTS peinture;
 DROP TABLE IF EXISTS categorie;
@@ -93,6 +94,17 @@ ALTER TABLE peinture ADD COLUMN description VARCHAR(1024);
 
 # États possibles
 INSERT INTO etat (libelle) VALUES ('en attente'), ('expédié'), ('validé'), ('confirmé');
+
+CREATE TABLE IF NOT EXISTS coordonnees (
+    id_coordonne INT AUTO_INCREMENT,
+    client_id INT REFERENCES utilisateur (id_utilisateur),
+    num_rue_nom TEXT,
+    ville VARCHAR(128),
+    code_postal INT,
+    nom_prenom VARCHAR(64),
+
+    PRIMARY KEY (id_coordonne, client_id)
+);
 
 #---------------------------------------------
 #-----------Jeux de test----------------------

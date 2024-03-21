@@ -60,8 +60,8 @@
         </table>
         <div>
             {% if nb_adresses is defined %}
-                {% if nb_adresses <4 %}
-                        <span style="color: darkorange">* adresse non valide</span>
+                {% if nb_adresses < 4 %}
+{#                        <span style="color: darkorange">* adresse non valide</span>#}
                   <a href="/client/coordonnee/add_adresse" class="btn btn-primary m-2">Ajouter une adresse</a>
                 {% endif %}
                  <span style="color:green;">( {{ nb_adresses }} / 4 )</span>
