@@ -1,6 +1,6 @@
 ## Étudiant 3: gestion des adresses d’expédition et de livraison
 
-1.  [ ] l’utilisateur peut créer maximum 4 adresses, il peut les modifier (la vérification est faite coté serveur et un message “flash” s’affiche lorsque le maximum de 4 est atteint)
+1.  [x] ~~l’utilisateur peut créer maximum 4 adresses, il peut les modifier (la vérification est faite coté serveur et un message “flash” s’affiche lorsque le maximum de 4 est atteint)~~
 2.  [ ] lors de la création d’une commande : <br>
     l’utilisateur doit créer une adresse si elle n’existe pas<br> 
     sinon la dernière adresse utilisée pour la livraison (favori) est proposée (une seule adresse favorite (ou 2 au choix) pour les 2 adresses)

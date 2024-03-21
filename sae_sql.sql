@@ -102,6 +102,7 @@ CREATE TABLE IF NOT EXISTS coordonnees (
     ville VARCHAR(128),
     code_postal INT,
     nom_prenom VARCHAR(64),
+    valide BOOLEAN DEFAULT false,
 
     PRIMARY KEY (id_coordonne, client_id)
 );

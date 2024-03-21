@@ -26,6 +26,7 @@ def client_coordonnee_show():
                            )
 
 
+# TODO
 @client_coordonnee.route('/client/coordonnee/edit', methods=['GET'])
 def client_coordonnee_edit():
     mycursor = get_db().cursor()
@@ -36,6 +37,7 @@ def client_coordonnee_edit():
                            )
 
 
+# TODO
 @client_coordonnee.route('/client/coordonnee/edit', methods=['POST'])
 def client_coordonnee_edit_valide():
     mycursor = get_db().cursor()
@@ -55,6 +57,7 @@ def client_coordonnee_edit_valide():
     return redirect('/client/coordonnee/show')
 
 
+# TODO
 @client_coordonnee.route('/client/coordonnee/delete_adresse', methods=['POST'])
 def client_coordonnee_delete_adresse():
     mycursor = get_db().cursor()
@@ -69,9 +72,10 @@ def client_coordonnee_add_adresse():
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
-    return render_template('client/coordonnee/add_adresse.html'
-                           # ,utilisateur=utilisateur
-                           )
+    mycursor.execute("""SELECT * FROM utilisateur WHERE id_utilisateur = %s;""", (id_client,))
+    utilisateur = mycursor.fetchone()
+
+    return render_template('client/coordonnee/add_adresse.html', utilisateur=utilisateur)
 
 
 @client_coordonnee.route('/client/coordonnee/add_adresse', methods=['POST'])
@@ -82,9 +86,30 @@ def client_coordonnee_add_adresse_valide():
     rue = request.form.get('rue')
     code_postal = request.form.get('code_postal')
     ville = request.form.get('ville')
+
+    mycursor.execute("""SELECT COUNT(*) AS c FROM coordonnees WHERE client_id = %s;""", (id_client,))
+    nb_addresses = mycursor.fetchone()
+
+    if nb_addresses is not None and int(nb_addresses["c"]) < 4:
+        mycursor.execute(
+            """INSERT INTO coordonnees (client_id, num_rue_nom, ville, code_postal, nom_prenom)
+        VALUE (%s, %s, %s, %s, %s);""",
+            (
+                id_client,
+                rue,
+                ville,
+                code_postal,
+                nom
+            )
+        )
+        get_db().commit()
+    else:
+        flash(u'Vous ne pouvez pas ajouter plus de 4 adresses', 'alert-warning')
+
     return redirect('/client/coordonnee/show')
 
 
+# TODO
 @client_coordonnee.route('/client/coordonnee/edit_adresse')
 def client_coordonnee_edit_adresse():
     mycursor = get_db().cursor()
@@ -97,6 +122,7 @@ def client_coordonnee_edit_adresse():
                            )
 
 
+# TODO
 @client_coordonnee.route('/client/coordonnee/edit_adresse', methods=['POST'])
 def client_coordonnee_edit_adresse_valide():
     mycursor = get_db().cursor()
