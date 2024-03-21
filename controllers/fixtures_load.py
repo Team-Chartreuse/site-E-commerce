@@ -6,7 +6,8 @@ from decimal import *
 from connexion_db import get_db
 
 fixtures_load = Blueprint('fixtures_load', __name__,
-                        template_folder='templates')
+                          template_folder='templates')
+
 
 @fixtures_load.route('/base/init')
 def fct_fixtures_load():
@@ -16,13 +17,12 @@ def fct_fixtures_load():
     mycursor.execute("DROP TABLE IF EXISTS ligne_commande;")
     mycursor.execute("DROP TABLE IF EXISTS commande;")
     mycursor.execute("DROP TABLE IF EXISTS etat;")
+    mycursor.execute("DROP TABLE IF EXISTS adresse_favorite;")
     mycursor.execute("DROP TABLE IF EXISTS coordonnees;")
     mycursor.execute("DROP TABLE IF EXISTS utilisateur;")
     mycursor.execute("DROP TABLE IF EXISTS peinture;")
     mycursor.execute("DROP TABLE IF EXISTS categorie;")
     mycursor.execute("DROP TABLE IF EXISTS couleur;")
-    mycursor.execute("DROP TABLE IF EXISTS adresse_favorite;")
-
 
     sql = '''CREATE TABLE IF NOT EXISTS categorie (
     id_categorie INT AUTO_INCREMENT NOT NULL,
@@ -81,11 +81,26 @@ def fct_fixtures_load():
 '''
     mycursor.execute(sql)
 
+    sql = """CREATE TABLE IF NOT EXISTS coordonnees (
+        id_coordonne INT AUTO_INCREMENT,
+        client_id INT REFERENCES utilisateur (id_utilisateur),
+        num_rue_nom TEXT,
+        ville VARCHAR(128),
+        code_postal INT,
+        nom_prenom VARCHAR(64),
+        valide BOOLEAN DEFAULT true,
+
+        PRIMARY KEY (id_coordonne, client_id)
+    );"""
+    mycursor.execute(sql)
+
     sql = '''CREATE TABLE IF NOT EXISTS commande (
     id_commande INT AUTO_INCREMENT,
     date_achat DATE,
     utilisateur_id INT,
     etat_id INT,
+    adresse_livraison INT REFERENCES coordonnees (id_coordonne),
+    adresse_facturation INT REFERENCES coordonnees (id_coordonne),
     PRIMARY KEY (id_commande),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id_utilisateur),
     FOREIGN KEY (etat_id) REFERENCES etat(id_etat)
@@ -112,19 +127,6 @@ def fct_fixtures_load():
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id_utilisateur),
     FOREIGN KEY (peinture_id) REFERENCES peinture(id_peinture)
 );'''
-    mycursor.execute(sql)
-
-    sql = """CREATE TABLE IF NOT EXISTS coordonnees (
-    id_coordonne INT AUTO_INCREMENT,
-    client_id INT REFERENCES utilisateur (id_utilisateur),
-    num_rue_nom TEXT,
-    ville VARCHAR(128),
-    code_postal INT,
-    nom_prenom VARCHAR(64),
-    valide BOOLEAN DEFAULT true,
-
-    PRIMARY KEY (id_coordonne, client_id)
-);"""
     mycursor.execute(sql)
 
     sql = """CREATE TABLE IF NOT EXISTS adresse_favorite (

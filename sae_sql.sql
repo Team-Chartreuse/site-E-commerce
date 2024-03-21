@@ -60,11 +60,25 @@ CREATE TABLE IF NOT EXISTS etat (
     PRIMARY KEY (id_etat)
 );
 
+CREATE TABLE IF NOT EXISTS coordonnees (
+    id_coordonne INT AUTO_INCREMENT,
+    client_id INT REFERENCES utilisateur (id_utilisateur),
+    num_rue_nom TEXT,
+    ville VARCHAR(128),
+    code_postal INT,
+    nom_prenom VARCHAR(64),
+    valide BOOLEAN DEFAULT true,
+
+    PRIMARY KEY (id_coordonne, client_id)
+);
+
 CREATE TABLE IF NOT EXISTS commande (
     id_commande INT AUTO_INCREMENT,
     date_achat DATE,
     utilisateur_id INT,
     etat_id INT,
+    adresse_livraison INT REFERENCES coordonnees (id_coordonne),
+    adresse_facturation INT REFERENCES coordonnees (id_coordonne),
     PRIMARY KEY (id_commande),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id_utilisateur),
     FOREIGN KEY (etat_id) REFERENCES etat(id_etat)
@@ -95,18 +109,6 @@ ALTER TABLE peinture ADD COLUMN description VARCHAR(1024);
 
 # États possibles
 INSERT INTO etat (libelle) VALUES ('en attente'), ('expédié'), ('validé'), ('confirmé');
-
-CREATE TABLE IF NOT EXISTS coordonnees (
-    id_coordonne INT AUTO_INCREMENT,
-    client_id INT REFERENCES utilisateur (id_utilisateur),
-    num_rue_nom TEXT,
-    ville VARCHAR(128),
-    code_postal INT,
-    nom_prenom VARCHAR(64),
-    valide BOOLEAN DEFAULT true,
-
-    PRIMARY KEY (id_coordonne, client_id)
-);
 
 CREATE TABLE IF NOT EXISTS adresse_favorite (
     client_id INT REFERENCES utilisateur (id_utilisateur),
