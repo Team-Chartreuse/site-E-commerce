@@ -8,7 +8,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from connexion_db import get_db
 
 auth_security = Blueprint('auth_security', __name__,
-                        template_folder='templates')
+                          template_folder='templates')
+
 
 @auth_security.route('/login')
 def auth_login():
@@ -41,6 +42,7 @@ def auth_login_post():
     else:
         flash(u'Vérifier votre login et essayer encore.', 'alert-warning')
         return redirect('/login')
+
 
 @auth_security.route('/signup')
 def auth_signup():
@@ -88,7 +90,7 @@ def auth_logout():
     session.pop('id_user', None)
     return redirect('/')
 
+
 @auth_security.route('/forget-password', methods=['GET'])
 def forget_password():
     return render_template('auth/forget_password.html')
-

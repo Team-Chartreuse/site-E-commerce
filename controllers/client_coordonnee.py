@@ -64,6 +64,10 @@ def client_coordonnee_edit_valide():
         (nom, login, email, id_client)
     )
     get_db().commit()
+
+    # Edit session
+    session['login'] = login
+
     return redirect('/client/coordonnee/show')
 
 
