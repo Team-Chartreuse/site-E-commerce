@@ -26,18 +26,19 @@ def client_coordonnee_show():
                            )
 
 
-# TODO
 @client_coordonnee.route('/client/coordonnee/edit', methods=['GET'])
 def client_coordonnee_edit():
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
+    mycursor.execute("""SELECT * FROM utilisateur WHERE id_utilisateur = %s;""", (id_client,))
+    utilisateur = mycursor.fetchone()
+
     return render_template('client/coordonnee/edit_coordonnee.html'
-                           # ,utilisateur=utilisateur
+                           , utilisateur=utilisateur
                            )
 
 
-# TODO
 @client_coordonnee.route('/client/coordonnee/edit', methods=['POST'])
 def client_coordonnee_edit_valide():
     mycursor = get_db().cursor()
@@ -46,23 +47,34 @@ def client_coordonnee_edit_valide():
     login = request.form.get('login')
     email = request.form.get('email')
 
-    utilisateur = None
+    mycursor.execute("""SELECT 1 FROM utilisateur WHERE (email = %s OR login = %s) AND id_utilisateur != %s;""", (email, login, id_client))
+    utilisateur = mycursor.fetchone()
+
     if utilisateur:
         flash(u'votre cet Email ou ce Login existe déjà pour un autre utilisateur', 'alert-warning')
+
+        mycursor.execute("""SELECT * FROM utilisateur WHERE id_utilisateur = %s;""", (id_client,))
+        utilisateur = mycursor.fetchone()
         return render_template('client/coordonnee/edit_coordonnee.html'
-                               # , user=user
+                               , utilisateur=utilisateur
                                )
 
+    mycursor.execute(
+        """UPDATE utilisateur SET nom = %s, login = %s, email = %s WHERE id_utilisateur = %s;""",
+        (nom, login, email, id_client)
+    )
     get_db().commit()
     return redirect('/client/coordonnee/show')
 
 
-# TODO
 @client_coordonnee.route('/client/coordonnee/delete_adresse', methods=['POST'])
 def client_coordonnee_delete_adresse():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     id_adresse = request.form.get('id_adresse')
+
+    mycursor.execute("""DELETE FROM coordonnees WHERE id_coordonne = %s AND client_id = %s;""", (id_adresse, id_client))
+    get_db().commit()
 
     return redirect('/client/coordonnee/show')
 
@@ -109,20 +121,25 @@ def client_coordonnee_add_adresse_valide():
     return redirect('/client/coordonnee/show')
 
 
-# TODO
 @client_coordonnee.route('/client/coordonnee/edit_adresse')
 def client_coordonnee_edit_adresse():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     id_adresse = request.args.get('id_adresse')
 
+    mycursor.execute("""SELECT * FROM coordonnees WHERE client_id = %s AND id_coordonne = %s;""",
+                     (id_client, id_adresse))
+    adresse = mycursor.fetchone()
+
+    mycursor.execute("""SELECT * FROM utilisateur WHERE id_utilisateur = %s;""", (id_client,))
+    utilisateur = mycursor.fetchone()
+
     return render_template('/client/coordonnee/edit_adresse.html'
-                           # ,utilisateur=utilisateur
-                           # ,adresse=adresse
+                           , utilisateur=utilisateur
+                           , adresse=adresse
                            )
 
 
-# TODO
 @client_coordonnee.route('/client/coordonnee/edit_adresse', methods=['POST'])
 def client_coordonnee_edit_adresse_valide():
     mycursor = get_db().cursor()
@@ -131,6 +148,17 @@ def client_coordonnee_edit_adresse_valide():
     rue = request.form.get('rue')
     code_postal = request.form.get('code_postal')
     ville = request.form.get('ville')
-    id_adresse = request.form.get('id_adresse')
+    id_adresse = request.form.get('id_coordonne')
+
+    mycursor.execute("""
+    UPDATE coordonnees
+    SET
+        nom_prenom = %s,
+        num_rue_nom = %s,
+        code_postal = %s,
+        ville = %s
+    WHERE
+        id_coordonne = %s;""", (nom, rue, code_postal, ville, id_adresse,))
+    get_db().commit()
 
     return redirect('/client/coordonnee/show')

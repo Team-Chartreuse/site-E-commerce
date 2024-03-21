@@ -47,9 +47,9 @@
                             {% if adresse.valide is defined and adresse.valide==0 %}
                                 <span style="color: darkorange">*</span>
                             {% else %}
-                                <a class="btn btn-primary" href="/client/coordonnee/edit_adresse?id_adresse={{ adresse.id_adresse }}"> Modifier </a>
+                                <a class="btn btn-primary" href="/client/coordonnee/edit_adresse?id_adresse={{ adresse.id_coordonne }}"> Modifier </a>
                             <form action="/client/coordonnee/delete_adresse" style="display: inline-block;"  method="post">
-                                <input type="hidden"  name="id_adresse" value="{{ adresse.id_adresse }}">
+                                <input type="hidden"  name="id_adresse" value="{{ adresse.id_coordonne }}">
                                 <button class="btn btn-primary" > Supprimer </button>
                             </form>
                             {% endif %}
