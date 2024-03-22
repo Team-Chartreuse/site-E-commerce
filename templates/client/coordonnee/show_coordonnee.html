@@ -32,6 +32,7 @@
                     <th>Rue</th>
                      <th>Code Postal</th>
                      <th>Ville</th>
+                     <th>Nb commandes</th>
                     <th></th>
                 </tr>
             </thead>
@@ -43,6 +44,7 @@
                         <td>{{ adresse.num_rue_nom }}</td>
                         <td>{{ adresse.code_postal }}</td>
                         <td>{{ adresse.ville }}</td>
+                        <td>{{ adresse.nb_commandes or 0 }}</td>
                         <td>
                             {% if adresse.valide is defined and adresse.valide==0 %}
                                 <span style="color: darkorange">*</span>

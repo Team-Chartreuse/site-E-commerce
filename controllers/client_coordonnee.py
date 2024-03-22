@@ -16,7 +16,18 @@ def client_coordonnee_show():
     mycursor.execute("""SELECT * FROM utilisateur WHERE id_utilisateur = %s""", (id_client,))
     utilisateur = mycursor.fetchone()
 
-    mycursor.execute("""SELECT * FROM coordonnees WHERE client_id = %s""", (id_client,))
+    mycursor.execute("""
+    SELECT
+    coordonnees.*,
+    COUNT(icalaf.id_commande) as nb_commandes
+FROM coordonnees
+LEFT JOIN (
+    SELECT id_commande, adresse_livraison, adresse_facturation
+    FROM commande
+) as icalaf
+    ON icalaf.adresse_facturation = coordonnees.id_coordonne OR icalaf.adresse_livraison = coordonnees.id_coordonne
+WHERE client_id = %s
+GROUP BY coordonnees.id_coordonne;""", (id_client,))
     adresses = mycursor.fetchall()
 
     mycursor.execute("""SELECT COUNT(*) AS t FROM coordonnees WHERE client_id = %s AND valide;""", (id_client,))
@@ -50,7 +61,8 @@ def client_coordonnee_edit_valide():
     login = request.form.get('login')
     email = request.form.get('email')
 
-    mycursor.execute("""SELECT 1 FROM utilisateur WHERE (email = %s OR login = %s) AND id_utilisateur != %s;""", (email, login, id_client))
+    mycursor.execute("""SELECT 1 FROM utilisateur WHERE (email = %s OR login = %s) AND id_utilisateur != %s;""",
+                     (email, login, id_client))
     utilisateur = mycursor.fetchone()
 
     if utilisateur:
@@ -80,7 +92,20 @@ def client_coordonnee_delete_adresse():
     id_client = session['id_user']
     id_adresse = request.form.get('id_adresse')
 
-    mycursor.execute("""UPDATE coordonnees SET valide=0 WHERE id_coordonne = %s AND client_id = %s;""", (id_adresse, id_client))
+    mycursor.execute(
+        """SELECT 1 FROM commande WHERE adresse_livraison = %s OR adresse_livraison = %s;""",
+        (id_adresse, id_adresse)
+    )
+    commandes = mycursor.fetchall()
+
+    if len(commandes) > 0:
+        mycursor.execute(
+            """UPDATE coordonnees SET valide=0 WHERE id_coordonne = %s AND client_id = %s;""",
+            (id_adresse, id_client)
+        )
+    else:
+        mycursor.execute("""DELETE FROM coordonnees WHERE id_coordonne = %s;""", (id_adresse,))
+
     get_db().commit()
 
     return redirect('/client/coordonnee/show')
