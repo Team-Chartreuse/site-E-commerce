@@ -18,15 +18,36 @@ admin_article = Blueprint('admin_article', __name__,
 def show_article():
     mycursor = get_db().cursor()
     sql = '''SELECT
-    p.nom_peinture AS nom,
     p.id_peinture AS id_article,
-    c.nom_categorie AS libelle,
-    c.id_categorie AS type_article_id,
+    p.nom_peinture AS nom,
+    p.volume_pot,
+    COUNT(n.note) AS nb_notes,
+    CASE
+        WHEN COUNT(n.note) > 0 THEN AVG(n.note)
+        ELSE NULL
+    END AS moy_notes,
+    COALESCE(com.nb_commentaires_nouveaux, 0) AS nb_commentaires_nouveaux,
+    p.numero_melange,
     p.prix_peinture AS prix,
-    p.stock AS stock,
-    p.image AS image
+    p.couleur_id,
+    p.categorie_id AS type_article_id,
+    p.fournisseur,
+    p.marque,
+    p.image,
+    c.nom_couleur,
+    cat.nom_categorie,
+    p.stock
 FROM peinture p
-INNER JOIN categorie c ON c.id_categorie = p.categorie_id;'''
+JOIN couleur c ON p.couleur_id = c.id_couleur
+JOIN categorie cat ON p.categorie_id = cat.id_categorie
+LEFT JOIN (
+    SELECT peinture_id, COUNT(*) AS nb_commentaires_nouveaux
+    FROM commentaire
+    WHERE valider = 'NON'
+    GROUP BY peinture_id
+) com ON p.id_peinture = com.peinture_id
+LEFT JOIN note n ON p.id_peinture = n.peinture_id
+GROUP BY p.id_peinture;'''
     mycursor.execute(sql)
     articles = mycursor.fetchall()
     return render_template('admin/article/show_article.html', articles=articles)

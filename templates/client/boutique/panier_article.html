@@ -65,7 +65,7 @@
                                  {% if article.stock > 0 %}
                                     <small class="text-muted">Stock restant : {{ article.stock }}</small>
                                  {% else %}
-                                    <small class="text-muted">article  momentanément indisponible</small>
+                                    <small class="text-muted">article momentanément indisponible</small>
                                  {% endif %}
                                 {% if article.nb_declinaison is defined and article.nb_declinaison != None %}
                                     ({{ article.nb_declinaison }} d.)

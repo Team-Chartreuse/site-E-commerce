@@ -36,10 +36,11 @@ WHERE
         abort("pb nb de declinaison")
     else:
         sql = '''  INSERT INTO ligne_panier (utilisateur_id, peinture_id, quantite, date_ajout)
-         VALUE ()''' # TODO demander quelle déclinaison choisir
+         VALUE ()'''
         # tuple_insert_ligne = (declinaisons[])
         mycursor.execute(sql, id_article)
         article = mycursor.fetchone()
+
         return render_template('client/boutique/declinaison_article.html'
                                    , declinaisons=declinaisons
                                    , quantite=quantite

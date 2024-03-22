@@ -34,7 +34,7 @@
         {% if article.moyenne_notes is not defined or  article.nb_notes is not defined or  article.moyenne_notes == None %}
             <strong>Pas de Note</strong>
         {% else %}
-            <strong>Note moyenne de cet article : {{ article.moyenne_notes }}</strong>&nbsp;({{ article.nb_notes }} note(s))
+            <strong>Note moyenne de cet article : {{  "{:,.1f}".format(article.moyenne_notes) }}</strong>&nbsp;({{ article.nb_notes }} note(s))
         {% endif %}
     </div>
         {% if commandes_articles.nb_commandes_article is defined and commandes_articles.nb_commandes_article > 0 %}
@@ -54,7 +54,8 @@
                      </div>
                     </form>
                     <form  action="/client/note/delete"   method="post" class="row">
-                    <input type="hidden" name="id_article" value="{{ article.id_article }}">
+                        <input type="hidden" name="id_article" value="{{ article.id_article }}">
+                        <input type="hidden" name="id_utilisateur" value="{{ article.id_utilisateur }}">
                      <div class="col-md-2">
                          <button class="btn btn-primary" > Supprimer votre note </button>
                      </div>
@@ -63,7 +64,7 @@
                     <form  action="/client/note/add"   method="post" class="row">
                     <input type="hidden" name="id_article" value="{{ article.id_article }}">
                     <div class="col-md-3">
-                        <label for="input_note" class="d-flex justify-content-end align-items-end pe-3">Mettre une note  sur cet article : </label>
+                        <label for="input_note" class="d-flex justify-content-end align-items-end pe-3">Mettre une note sur cet article : </label>
                     </div>
                     <div class="col-md-1">
                         <input type="number" name="note" id="input_note" step="0.1" min="0" max="5" class="form-control col-md-2" value="" >
@@ -127,7 +128,7 @@
                 {% for commentaire in commentaires %}
                     <tr>
                         <td>{{ commentaire.nom }}({{ commentaire.id_utilisateur }})</td>
-                        <td>{% if commentaire.utilisateur_id == 1 %}
+                        <td>{% if commentaire.id_utilisateur == 1 %}
                             <span style="color: red">(réponse de l'administrateur du site (webmaster) ) :</span>
                             {% endif %}
                             {{ commentaire.commentaire }}</td>

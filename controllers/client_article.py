@@ -16,25 +16,40 @@ def client_article_show():             # remplace client_index
 
     sql = '''
     SELECT
-        id_peinture AS id_article,
-        nom_peinture AS nom,
-        volume_pot,
-        numero_melange,
-        prix_peinture AS prix,
-        couleur_id,
-        categorie_id,
-        fournisseur,
-        marque,
-        image,
-        nom_couleur,
-        nom_categorie,
-        stock
-    FROM peinture
-    JOIN couleur
-    ON peinture.couleur_id = couleur.id_couleur
-    JOIN categorie
-    ON peinture.categorie_id = categorie.id_categorie
-    '''
+    p.id_peinture AS id_article,
+    p.nom_peinture AS nom,
+    p.volume_pot,
+    COALESCE(n.nb_notes, 0) AS nb_notes,
+    CASE
+        WHEN n.nb_notes > 0 THEN n.moyenne_notes
+        ELSE NULL
+    END AS moy_notes,
+    COALESCE(com.nb_avis, 0) AS nb_avis,
+    p.numero_melange,
+    p.prix_peinture AS prix,
+    p.couleur_id,
+    p.categorie_id,
+    p.fournisseur,
+    p.marque,
+    p.image,
+    c.nom_couleur,
+    cat.nom_categorie,
+    p.stock
+FROM peinture p
+JOIN couleur c ON p.couleur_id = c.id_couleur
+JOIN categorie cat ON p.categorie_id = cat.id_categorie
+LEFT JOIN (
+    SELECT peinture_id, COUNT(*) AS nb_notes, AVG(note) AS moyenne_notes
+    FROM note
+    GROUP BY peinture_id
+) n ON p.id_peinture = n.peinture_id
+LEFT JOIN (
+    SELECT peinture_id, COUNT(*) AS nb_avis
+    FROM commentaire
+    GROUP BY peinture_id
+) com ON p.id_peinture = com.peinture_id
+GROUP BY p.id_peinture;
+'''
 
     list_param = []
     condition = []
@@ -59,6 +74,7 @@ def client_article_show():             # remplace client_index
     sql3 = ''' prise en compte des commentaires et des notes dans le SQL    '''  # TODO
     mycursor.execute(sql+condition_and, tuple(list_param))
     articles = mycursor.fetchall()
+    print(articles)
 
     # pour le filtre
     sql2 = '''
