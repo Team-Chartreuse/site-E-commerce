@@ -27,10 +27,13 @@
             <tbody>
 
                 {% for commentaire in commentaires %}
+                    {% print(commentaire.valider, session['id_user'], commentaire.id_utilisateur) %}
                     {% if commentaire.valider == 1 and session['id_user']==commentaire.id_utilisateur %}
-                    <tr class="bg-success bg-opacity-25">
+                         {% print("Okk1") %}
+                        <tr class=" bg-opacity-25">
                     {% elif commentaire.valider == 1 %}
-                    <tr class="bg-warning bg-opacity-25">
+                        {% print("Okk2") %}
+                        <tr class="bg-warning bg-opacity-25">
                     {% else %}
                     <tr>
                     {% endif %}

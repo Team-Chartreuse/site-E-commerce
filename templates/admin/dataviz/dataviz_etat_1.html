@@ -2,14 +2,12 @@
 
 
 {% block javascripts %}
-{#    attention il faut importer la bibliotheque chart.js avant de définir l'objet chart#}
     {{ super() }}
-   {# <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}" ></script>#}
+   <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}" ></script>
 {% endblock %}
 
 {% block javascripts_head %}
-{#    attention il faut importer la bibliotheque chart.js avant de définir l'objet chart#}
-{#    <script src="{{ url_for('static', filename='chart.js') }}" ></script>#}
+<script src="{{ url_for('static', filename='chart.js') }}" ></script>
       <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 {% endblock %}
 
@@ -21,25 +19,26 @@
 <br>
 
     <h2> nombre d'articles :
-{#    <span style="color: red;">{{ cout_total.nbr_articles }}</span></h2>#}
+<span style="color: red;">{{ nbr_articles.nbr_articles }}</span></h2>
 
 <table class="table">
     <thead class="thead-dark">
         <tr>
-           <th>type d'article</th> <th>(id)</th><th>nombre d'articles</th>
+            <th>type d'article</th>
+            <th>(id)</th>
+            <th>nombre d'articles</th>
         </tr>
     </thead>
     <tbody>
     {% if types_articles_nb | length >= 1 %}
-        {% for ligne in types_articles_nb %}
+        {% for ligne in lignes %}
            <tr>
                   <td>{{ ligne.libelle }}</td>
                   <td>{{ ligne.id_type_article }}</td>
                    <td><span style="color: red">
-                       {% if ligne.nbr_articles_stock is not none %}  {{ ligne.nbr_articles }} {% else %}
-                       pas d'article {% endif %}
+                       {#% if ligne.nbr_articles_stock is not none %#}  {{ ligne.nbr_articles }} {#% else %#}
+                       {#% endif %#}
                    </span></td>
-
            </tr>
         {% endfor %}
     {% else %}
@@ -48,7 +47,7 @@
     </tbody>
 </table>
     <br>
-{#    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>#}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <h2>visualisation de données : graph.js</h2>
 <h3>Documentation</h3>
@@ -61,7 +60,7 @@
 
 {# https://jinja.palletsprojects.com/en/3.0.x/templates/#html-escaping #}
     <div style="width: 900px; height: 500px; border: #0a53be 1px solid;">
-        <canvas id="Chart1" ></canvas>
+        <canvas id="Chart1" width="1040" height="585"></canvas>
     </div>
     graphique 1
     <script>
@@ -90,9 +89,9 @@
     </script>
 
 
-    <h2>demo graphique à secteurs : "camenberd" ,"donut" ( "pie-chart"  "doughtnut")</h2>
+    <h2>demo graphique à secteurs : "camenbert" ,"donut" ( "pie-chart" - "doughtnut")</h2>
 
-    <canvas id="pie-chart" width="800" height="450"></canvas>
+    <canvas id="pie-chart" width="640" height="360"></canvas>
 
     <script>
 	var Chart2 = new Chart(document.getElementById("pie-chart"), {
@@ -105,6 +104,8 @@
              "#faf24c"
              , "#6a6ce7","#55f68f","#D0c309","#c45000"],
         data: {{ values | safe }},
+          borderColor: "rgb(75,192,192)",
+          lineTension: 0.1
       }]
     },
     options: {
