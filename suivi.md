@@ -8,7 +8,7 @@
 4.  [x] ~~le client peut consulter ses commandes avec les adresses de livraison et facturation~~
 5.  [x] ~~Interface pour ajouter/modifier les informations de l’utilisateur (nom, login, email). Pas de doublon possible avec l’email et le login. Mettre à jour les valeurs de connexion (session).~~
 6.  [x] ~~Le client peut faire l’ajout/la modification/la suppression d’une adresse ; vérifier que l’utilisateur connecté possède bien cette adresse.~~
-7.  [ ] (ADMIN) si l’administrateur consulte une commande il peut voir l’adresse d’expédition et l’adresse de facturation
+7.  [x] ~~(ADMIN) si l’administrateur consulte une commande il peut voir l’adresse d’expédition et l’adresse de facturation~~
 8.  [ ] VISUALISATION de données sur les ventes (nombre de commandes, Chiffre d'affaires / départements …)
 9.  [x] ~~**Le nombre de commandes par adresse ainsi que l’adresse favorite est indiquée dans le tableau des adresses.**~~
 10. [x] ~~**Gestion d’une adresse supprimée utilisée dans une commande. Elle ne peut pas être supprimée, mais devient non “valide”. De fait cette adresse n’est plus utilisable et n’est plus comptée dans les adresses.**~~

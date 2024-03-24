@@ -15,7 +15,7 @@ def admin_index():
     return render_template('admin/layout_admin.html')
 
 
-@admin_commande.route('/admin/commande/show', methods=['get', 'post'])
+@admin_commande.route('/admin/commande/show', methods=['GET', 'POST'])
 def admin_commande_show():
     mycursor = get_db().cursor()
     admin_id = session['id_user']
@@ -68,7 +68,43 @@ WHERE lc.commande_id = %s;'''
         mycursor.execute(sql, (id_commande,))
         client = mycursor.fetchone()
 
-        commande_adresses = []
+        sql = '''SELECT
+                                    id_coordonne as id_adresse_livraison,
+                                    nom_prenom as nom_livraison,
+                                    num_rue_nom as rue_livraison,
+                                    code_postal as code_postal_livraison,
+                                    ville as ville_livraison
+                                FROM coordonnees
+                                INNER JOIN commande c ON c.adresse_livraison = coordonnees.id_coordonne
+                                WHERE c.id_commande = %s;'''
+        mycursor.execute(sql, (id_commande,))
+        commande_livraison = mycursor.fetchone()
+        print(commande_livraison)
+        if commande_livraison is None:
+            flash("Vous n'avez pas d'adresse de livraison pour cette commande", 'alert-warning')
+            return redirect('/client/commande/show')
+        commande_adresses = commande_livraison
+
+        sql = '''SELECT
+                            id_coordonne as id_adresse_facturation,
+                            nom_prenom as nom_facturation,
+                            num_rue_nom as rue_facturation,
+                            code_postal as code_postal_facturation,
+                            ville as ville_facturation
+                        FROM coordonnees
+                        INNER JOIN commande c ON c.adresse_facturation = coordonnees.id_coordonne
+                        WHERE c.id_commande = %s;'''
+        mycursor.execute(sql, (id_commande,))
+        commande_facturation: dict = mycursor.fetchone()
+        if commande_facturation is None:
+            flash("Vous n'avez pas d'adresse de facturation pour cette commande", 'alert-warning')
+            return redirect('/client/commande/show')
+
+        if commande_facturation["id_adresse_facturation"] == commande_livraison["id_adresse_livraison"]:
+            commande_adresses["adresse_identique"] = True
+        else:
+            for (k, v) in commande_facturation.items():
+                commande_adresses[k] = v
 
     print(articles_commande)
     return render_template('admin/commandes/show.html'
