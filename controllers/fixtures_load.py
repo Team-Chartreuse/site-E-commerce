@@ -17,7 +17,6 @@ def fct_fixtures_load():
     mycursor.execute("DROP TABLE IF EXISTS ligne_commande;")
     mycursor.execute("DROP TABLE IF EXISTS commande;")
     mycursor.execute("DROP TABLE IF EXISTS etat;")
-    mycursor.execute("DROP TABLE IF EXISTS adresse_favorite;")
     mycursor.execute("DROP TABLE IF EXISTS coordonnees;")
     mycursor.execute("DROP TABLE IF EXISTS utilisateur;")
     mycursor.execute("DROP TABLE IF EXISTS peinture;")
@@ -127,14 +126,6 @@ def fct_fixtures_load():
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id_utilisateur),
     FOREIGN KEY (peinture_id) REFERENCES peinture(id_peinture)
 );'''
-    mycursor.execute(sql)
-
-    sql = """CREATE TABLE IF NOT EXISTS adresse_favorite (
-    client_id INT REFERENCES utilisateur (id_utilisateur),
-    id_coordonnee INT REFERENCES coordonnees (id_coordonne),
-
-    PRIMARY KEY (client_id)
-);"""
     mycursor.execute(sql)
 
     sql = '''INSERT INTO etat (libelle) VALUES ('en attente'), ('expédié'), ('validé'), ('confirmé');'''

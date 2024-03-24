@@ -39,8 +39,7 @@
             <tbody>
                 {% for adresse in adresses %}
                     <tr {% if adresse.valide is defined and adresse.valide==0 %} style="color: darkorange"{% endif %}>
-
-                        <td>{{ adresse.nom_prenom }}</td>
+                        <td>{% if id_adresse_favorite.id_coordonne == adresse.id_coordonne %}⭐ {% endif %}{{ adresse.nom_prenom }}</td>
                         <td>{{ adresse.num_rue_nom }}</td>
                         <td>{{ adresse.code_postal }}</td>
                         <td>{{ adresse.ville }}</td>
@@ -61,6 +60,7 @@
             </tbody>
         </table>
         <div>
+            <p>Adresse favorite ⭐</p>
             {% if nb_adresses is defined %}
                 {% if nb_adresses < 4 %}
 {#                        <span style="color: darkorange">* adresse non valide</span>#}

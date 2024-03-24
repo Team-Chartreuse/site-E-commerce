@@ -2,7 +2,6 @@ DROP TABLE IF EXISTS ligne_panier;
 DROP TABLE IF EXISTS ligne_commande;
 DROP TABLE IF EXISTS commande;
 DROP TABLE IF EXISTS etat;
-DROP TABLE IF EXISTS adresse_favorite;
 DROP TABLE IF EXISTS coordonnees;
 DROP TABLE IF EXISTS utilisateur;
 DROP TABLE IF EXISTS peinture;
@@ -109,13 +108,6 @@ ALTER TABLE peinture ADD COLUMN description VARCHAR(1024);
 
 # États possibles
 INSERT INTO etat (libelle) VALUES ('en attente'), ('expédié'), ('validé'), ('confirmé');
-
-CREATE TABLE IF NOT EXISTS adresse_favorite (
-    client_id INT REFERENCES utilisateur (id_utilisateur),
-    id_coordonnee INT REFERENCES coordonnees (id_coordonne),
-
-    PRIMARY KEY (client_id)
-);
 
 #---------------------------------------------
 #-----------Jeux de test----------------------

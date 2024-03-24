@@ -44,12 +44,23 @@ def client_commande_valide():
     mycursor.execute("""SELECT * FROM coordonnees WHERE client_id = %s AND valide;""", (id_client,))
     adresses = mycursor.fetchall()
 
+    mycursor.execute("""SELECT
+        coordonnees.id_coordonne
+    FROM coordonnees
+    LEFT JOIN commande c ON c.adresse_livraison = coordonnees.id_coordonne OR c.adresse_facturation = coordonnees.id_coordonne
+    WHERE client_id = %s
+    GROUP BY id_coordonne, c.date_achat
+    ORDER BY c.date_achat DESC LIMIT 1;""", (id_client,))
+    id_adresse_favorite = mycursor.fetchone()["id_coordonne"]
+
+    print(id_adresse_favorite)
+
     return render_template('client/boutique/panier_validation_adresses.html'
                            , articles_panier=articles_panier
                            , prix_total=prix_total
                            , validation=1
                            , adresses=adresses
-                           # , id_adresse_fav=id_adresse_fav
+                           , id_adresse_fav=id_adresse_favorite
                            )
 
 
@@ -139,8 +150,6 @@ def client_commande_show():
     ORDER BY etat_id, date_achat DESC
     '''
     mycursor.execute(sql, id_client)
-
-    sql = '''  selection des commandes ordonnées par état puis par date d'achat descendant '''
     commandes = mycursor.fetchall()
 
     articles_commande = None

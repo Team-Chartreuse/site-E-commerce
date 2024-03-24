@@ -19,16 +19,22 @@ def client_coordonnee_show():
     mycursor.execute("""
     SELECT
     coordonnees.*,
-    COUNT(icalaf.id_commande) as nb_commandes
+    COUNT(c.id_commande) as nb_commandes
 FROM coordonnees
-LEFT JOIN (
-    SELECT id_commande, adresse_livraison, adresse_facturation
-    FROM commande
-) as icalaf
-    ON icalaf.adresse_facturation = coordonnees.id_coordonne OR icalaf.adresse_livraison = coordonnees.id_coordonne
+LEFT JOIN commande c ON c.adresse_facturation = coordonnees.id_coordonne OR c.adresse_livraison = coordonnees.id_coordonne
 WHERE client_id = %s
-GROUP BY coordonnees.id_coordonne;""", (id_client,))
+GROUP BY coordonnees.id_coordonne, c.date_achat, valide
+ORDER BY valide DESC, c.date_achat DESC, COUNT(c.id_commande) DESC;""", (id_client,))
     adresses = mycursor.fetchall()
+
+    mycursor.execute("""SELECT
+    coordonnees.id_coordonne
+FROM coordonnees
+LEFT JOIN commande c ON c.adresse_livraison = coordonnees.id_coordonne OR c.adresse_facturation = coordonnees.id_coordonne
+WHERE client_id = %s
+GROUP BY id_coordonne, c.date_achat
+ORDER BY c.date_achat DESC LIMIT 1;""", (id_client,))
+    id_adresse_favorite = mycursor.fetchone()
 
     mycursor.execute("""SELECT COUNT(*) AS t FROM coordonnees WHERE client_id = %s AND valide;""", (id_client,))
     nb_adresses = mycursor.fetchone()["t"]
@@ -37,6 +43,7 @@ GROUP BY coordonnees.id_coordonne;""", (id_client,))
                            , utilisateur=utilisateur
                            , adresses=adresses
                            , nb_adresses=nb_adresses
+                           , id_adresse_favorite=id_adresse_favorite
                            )
 
 
@@ -159,6 +166,7 @@ def client_coordonnee_edit_adresse():
     id_client = session['id_user']
     id_adresse = request.args.get('id_adresse')
 
+
     mycursor.execute("""SELECT * FROM coordonnees WHERE client_id = %s AND id_coordonne = %s;""",
                      (id_client, id_adresse))
     adresse = mycursor.fetchone()
@@ -182,15 +190,31 @@ def client_coordonnee_edit_adresse_valide():
     ville = request.form.get('ville')
     id_adresse = request.form.get('id_coordonne')
 
-    mycursor.execute("""
-    UPDATE coordonnees
-    SET
-        nom_prenom = %s,
-        num_rue_nom = %s,
-        code_postal = %s,
-        ville = %s
-    WHERE
-        id_coordonne = %s;""", (nom, rue, code_postal, ville, id_adresse,))
+    mycursor.execute(
+        """SELECT 1 FROM commande WHERE adresse_livraison = %s OR adresse_livraison = %s;""",
+        (id_adresse, id_adresse)
+    )
+    commandes = mycursor.fetchall()
+    if len(commandes) < 1:
+        mycursor.execute("""
+            UPDATE coordonnees
+            SET
+                nom_prenom = %s,
+                num_rue_nom = %s,
+                code_postal = %s,
+                ville = %s
+            WHERE
+                id_coordonne = %s;""", (nom, rue, code_postal, ville, id_adresse,))
+    else:
+        # On doit créer une nouvelle adresse et invalider l'ancienne
+        mycursor.execute("UPDATE coordonnees SET valide = false WHERE id_coordonne = %s;", (id_adresse,))
+        mycursor.execute(
+            """INSERT INTO coordonnees (client_id, num_rue_nom, ville, code_postal, nom_prenom, valide)
+        VALUE (%s, %s, %s, %s, %s, true);""",
+            (id_client, rue, ville, code_postal, nom)
+        )
+        get_db().commit()
+
     get_db().commit()
 
     return redirect('/client/coordonnee/show')
