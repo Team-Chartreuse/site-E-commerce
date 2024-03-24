@@ -15,7 +15,7 @@
 11. [x] ~~**Gestion de la modification d’une adresse. Une adresse utilisée pour une commande ne peut pas être modifiée, cette adresse devient non “valide”. De fait cette adresse n’est plus utilisable et n’est plus comptée dans les adresses. Cependant un doublon (une nouvelle adresse) est créée avec les nouvelles informations**~~
 12. [x] ~~**Re-proposer par défaut la dernière adresse utilisée comme adresse de livraison dans les listes déroulantes des adresses lors du passage d’une commande (l’adresse devient “favorite”)**~~
 13. [x] ~~**Conserver les adresses utilisées dans les factures même si on modifie l’une de ces adresses**~~
-14. [ ] **Si on supprime l’adresse “favorite”, celle qui a eu le plus de commandes devient “favorite”**
+14. [x] ~~**Si on supprime l’adresse “favorite”, celle qui a eu le plus de commandes devient “favorite”**~~
 15. [ ] **VISUALISATION 2 : affichage d’une carte avec les informations sur les clients (nombre de commandes par département …., livraison …)**
 
 
