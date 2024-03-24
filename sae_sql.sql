@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS ligne_panier;
 DROP TABLE IF EXISTS ligne_commande;
 DROP TABLE IF EXISTS commande;
 DROP TABLE IF EXISTS etat;
+DROP TABLE IF EXISTS adresse_favorite;
 DROP TABLE IF EXISTS coordonnees;
 DROP TABLE IF EXISTS utilisateur;
 DROP TABLE IF EXISTS peinture;

@@ -5,7 +5,7 @@
     l’utilisateur doit créer une adresse si elle n’existe pas<br> 
     sinon la dernière adresse utilisée pour la livraison (favori) est proposée (une seule adresse favorite (ou 2 au choix) pour les 2 adresses)~~
 3.  [x] ~~si l’adresse de facturation est la même que l’adresse de livraison, indiquer à l’utilisateur que ce sont les mêmes adresses~~
-4.  [ ] le client peut consulter ses commandes avec les adresses de livraison et facturation
+4.  [x] ~~le client peut consulter ses commandes avec les adresses de livraison et facturation~~
 5.  [x] ~~Interface pour ajouter/modifier les informations de l’utilisateur (nom, login, email). Pas de doublon possible avec l’email et le login. Mettre à jour les valeurs de connexion (session).~~
 6.  [x] ~~Le client peut faire l’ajout/la modification/la suppression d’une adresse ; vérifier que l’utilisateur connecté possède bien cette adresse.~~
 7.  [ ] (ADMIN) si l’administrateur consulte une commande il peut voir l’adresse d’expédition et l’adresse de facturation

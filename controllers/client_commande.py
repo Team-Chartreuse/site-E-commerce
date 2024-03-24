@@ -70,14 +70,14 @@ def client_commande_add():
 
     # choix de(s) (l')adresse(s)
 
-    # None if not checked, a string elsewhere
+    # None if not checked, date_achat string elsewhere
     is_adresses_different = request.form.get("adresse_identique") is None
 
-    id_adresse_facturation = request.form.get("id_adresse_facturation")
+    id_adresse_livraison = request.form.get("id_adresse_livraison")
 
-    id_adresse_livraison = id_adresse_facturation
+    id_adresse_facturation = id_adresse_livraison
     if is_adresses_different:
-        id_adresse_livraison = request.form.get("id_adresse_livraison")
+        id_adresse_facturation = request.form.get("id_adresse_facturation")
 
     id_client = session['id_user']
     sql = '''
@@ -98,7 +98,7 @@ def client_commande_add():
         return redirect('/client/article/show')
     # https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
     str_date = str(datetime.now())
-    a = datetime.strptime(str_date[:len(str_date) - 10], "%Y-%m-%d %H:%M")
+    date_achat = datetime.strptime(str_date[:len(str_date) - 10], "%Y-%m-%d %H:%M")
     etat_id = '''
     SELECT id_etat
     FROM etat
@@ -107,10 +107,9 @@ def client_commande_add():
     '''
     mycursor.execute(etat_id)
     etat_id = mycursor.fetchone()
-    print(etat_id)
     sql = '''INSERT INTO commande(date_achat, utilisateur_id, etat_id, adresse_facturation, adresse_livraison)
     VALUE (%s, %s, %s, %s, %s);'''
-    mycursor.execute(sql, (a, id_client, etat_id['id_etat'], id_adresse_facturation, id_adresse_livraison))
+    mycursor.execute(sql, (date_achat, id_client, etat_id['id_etat'], id_adresse_facturation, id_adresse_livraison))
 
     sql = '''SELECT LAST_INSERT_ID() AS last_insert_id FROM commande'''
     mycursor.execute(sql)
@@ -178,7 +177,44 @@ def client_commande_show():
             article['nb_declinaisons'] = 2
 
         # partie 2 : selection de l'adresse de livraison et de facturation de la commande selectionnée
-        sql = ''' selection des adressses '''
+
+        sql = '''SELECT
+                            id_coordonne as id_adresse_livraison,
+                            nom_prenom as nom_livraison,
+                            num_rue_nom as rue_livraison,
+                            code_postal as code_postal_livraison,
+                            ville as ville_livraison
+                        FROM coordonnees
+                        INNER JOIN commande c ON c.adresse_livraison = coordonnees.id_coordonne
+                        WHERE c.id_commande = %s;'''
+        mycursor.execute(sql, (id_commande,))
+        commande_livraison = mycursor.fetchone()
+        print(commande_livraison)
+        if commande_livraison is None:
+            flash("Vous n'avez pas d'adresse de livraison pour cette commande", 'alert-warning')
+            return redirect('/client/commande/show')
+        commande_adresses = commande_livraison
+
+        sql = '''SELECT
+                    id_coordonne as id_adresse_facturation,
+                    nom_prenom as nom_facturation,
+                    num_rue_nom as rue_facturation,
+                    code_postal as code_postal_facturation,
+                    ville as ville_facturation
+                FROM coordonnees
+                INNER JOIN commande c ON c.adresse_facturation = coordonnees.id_coordonne
+                WHERE c.id_commande = %s;'''
+        mycursor.execute(sql, (id_commande,))
+        commande_facturation: dict = mycursor.fetchone()
+        if commande_facturation is None:
+            flash("Vous n'avez pas d'adresse de facturation pour cette commande", 'alert-warning')
+            return redirect('/client/commande/show')
+
+        if commande_facturation["id_adresse_facturation"] == commande_livraison["id_adresse_livraison"]:
+            commande_adresses["adresse_identique"] = True
+        else:
+            for (k, v) in commande_facturation.items():
+                commande_adresses[k] = v
 
     return render_template('client/commandes/show.html'
                            , commandes=commandes
