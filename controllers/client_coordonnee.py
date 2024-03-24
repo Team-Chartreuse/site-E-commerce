@@ -4,6 +4,7 @@ from flask import Blueprint
 from flask import Flask, request, render_template, redirect, url_for, abort, flash, session, g
 
 from connexion_db import get_db
+from controllers.requetes import SELECT_LAST_ADDRESS_USED, SELECT_MOST_USED_ADDRESS
 
 client_coordonnee = Blueprint('client_coordonnee', __name__,
                               template_folder='templates')
@@ -27,14 +28,14 @@ GROUP BY coordonnees.id_coordonne, c.date_achat, valide
 ORDER BY valide DESC, c.date_achat DESC, COUNT(c.id_commande) DESC;""", (id_client,))
     adresses = mycursor.fetchall()
 
-    mycursor.execute("""SELECT
-    coordonnees.id_coordonne
-FROM coordonnees
-LEFT JOIN commande c ON c.adresse_livraison = coordonnees.id_coordonne OR c.adresse_facturation = coordonnees.id_coordonne
-WHERE client_id = %s
-GROUP BY id_coordonne, c.date_achat
-ORDER BY c.date_achat DESC LIMIT 1;""", (id_client,))
+    sql = """SELECT * FROM adresse_favorite WHERE id_client = %s;"""
+    mycursor.execute(sql, (id_client,))
     id_adresse_favorite = mycursor.fetchone()
+    if id_adresse_favorite is None:
+        mycursor.execute(SELECT_LAST_ADDRESS_USED, (id_client,))
+        id_adresse_favorite = mycursor.fetchone()["id_coordonne"]
+    else:
+        id_adresse_favorite = id_adresse_favorite["id_adresse"]
 
     mycursor.execute("""SELECT COUNT(*) AS t FROM coordonnees WHERE client_id = %s AND valide;""", (id_client,))
     nb_adresses = mycursor.fetchone()["t"]
@@ -112,6 +113,19 @@ def client_coordonnee_delete_adresse():
         )
     else:
         mycursor.execute("""DELETE FROM coordonnees WHERE id_coordonne = %s;""", (id_adresse,))
+
+    mycursor.execute("""SELECT * FROM adresse_favorite WHERE id_client = %s;""", (id_client,))
+    adresse_favorite = mycursor.fetchone()
+    if adresse_favorite is not None and str(adresse_favorite["id_adresse"]) == str(id_adresse):
+        mycursor.execute(SELECT_MOST_USED_ADDRESS, (id_client,))
+        id_most_used_address = mycursor.fetchone()["id_coordonne"]
+        mycursor.execute("UPDATE adresse_favorite SET id_adresse = %s WHERE id_client = %s;",
+                         (id_most_used_address, id_client))
+    elif adresse_favorite is None:
+        mycursor.execute(SELECT_LAST_ADDRESS_USED, (id_client,))
+        id_most_used_address = mycursor.fetchone()
+        mycursor.execute("UPDATE adresse_favorite SET id_adresse = %s WHERE id_client = %s;",
+                         (id_most_used_address, id_client))
 
     get_db().commit()
 

@@ -72,6 +72,13 @@ CREATE TABLE IF NOT EXISTS coordonnees (
     PRIMARY KEY (id_coordonne, client_id)
 );
 
+CREATE TABLE IF NOT EXISTS adresse_favorite (
+    id_client INT REFERENCES utilisateur (id_utilisateur),
+    id_adresse INT REFERENCES coordonnees (id_coordonne),
+
+    PRIMARY KEY (id_client)
+);
+
 CREATE TABLE IF NOT EXISTS commande (
     id_commande INT AUTO_INCREMENT,
     date_achat DATE,

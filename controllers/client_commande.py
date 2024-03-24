@@ -4,6 +4,7 @@ from flask import Blueprint
 from flask import Flask, request, render_template, redirect, url_for, abort, flash, session, g
 from datetime import datetime
 from connexion_db import get_db
+from controllers.requetes import SELECT_LAST_ADDRESS_USED
 
 client_commande = Blueprint('client_commande', __name__,
                             template_folder='templates')
@@ -44,16 +45,16 @@ def client_commande_valide():
     mycursor.execute("""SELECT * FROM coordonnees WHERE client_id = %s AND valide;""", (id_client,))
     adresses = mycursor.fetchall()
 
-    mycursor.execute("""SELECT
-        coordonnees.id_coordonne
-    FROM coordonnees
-    LEFT JOIN commande c ON c.adresse_livraison = coordonnees.id_coordonne OR c.adresse_facturation = coordonnees.id_coordonne
-    WHERE client_id = %s
-    GROUP BY id_coordonne, c.date_achat
-    ORDER BY c.date_achat DESC LIMIT 1;""", (id_client,))
-    id_adresse_favorite = mycursor.fetchone()["id_coordonne"]
-
-    print(id_adresse_favorite)
+    mycursor.execute("""SELECT * FROM adresse_favorite WHERE id_client = %s;""", (id_client, ))
+    id_adresse_favorite = mycursor.fetchone()
+    if id_adresse_favorite is None:
+        mycursor.execute(SELECT_LAST_ADDRESS_USED, (id_client,))
+        last_used_adresse = mycursor.fetchone()["id_coordonne"]
+        id_adresse_favorite = last_used_adresse
+        mycursor.execute("""INSERT INTO adresse_favorite (id_client, id_adresse) VALUE (%s, %s);""",
+                         (id_client, last_used_adresse))
+    else:
+        id_adresse_favorite = id_adresse_favorite["id_adresse"]
 
     return render_template('client/boutique/panier_validation_adresses.html'
                            , articles_panier=articles_panier
@@ -67,6 +68,7 @@ def client_commande_valide():
 @client_commande.route('/client/commande/add', methods=['POST'])
 def client_commande_add():
     mycursor = get_db().cursor()
+    id_client = session['id_user']
 
     # choix de(s) (l')adresse(s)
 
@@ -74,12 +76,19 @@ def client_commande_add():
     is_adresses_different = request.form.get("adresse_identique") is None
 
     id_adresse_livraison = request.form.get("id_adresse_livraison")
-
     id_adresse_facturation = id_adresse_livraison
     if is_adresses_different:
         id_adresse_facturation = request.form.get("id_adresse_facturation")
 
-    id_client = session['id_user']
+    mycursor.execute("""SELECT * FROM adresse_favorite WHERE id_client = %s;""", (id_client, ))
+    id_adresse_favorite = mycursor.fetchone()
+    if id_adresse_favorite is None:
+        mycursor.execute("""INSERT INTO adresse_favorite (id_client, id_adresse) VALUE (%s, %s);""",
+                         (id_client, id_adresse_livraison))
+    elif id_adresse_favorite["id_adresse"] != id_adresse_livraison:
+        mycursor.execute("""UPDATE adresse_favorite SET id_adresse = %s WHERE id_client = %s""",
+                         (id_adresse_livraison, id_client))
+
     sql = '''
     SELECT 
         peinture_id,
