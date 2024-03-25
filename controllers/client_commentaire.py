@@ -53,17 +53,18 @@ def client_article_details():
 
     sql_commentaires = '''
         SELECT U.nom AS nom,
-        C.peinture_id AS id_article,
-        U.id_utilisateur,
-        C.commentaire,
-        C.date_publication,
-        N.note
-        FROM commentaire C
-        INNER JOIN utilisateur U ON U.id_utilisateur = C.utilisateur_id
-        LEFT JOIN note N ON N.utilisateur_id = U.id_utilisateur
-        WHERE C.peinture_id = %s
-        AND (C.valider = 1 OR U.id_utilisateur = %s)
-        ORDER BY C.date_publication ASC, U.id_utilisateur DESC;'''
+       C.peinture_id AS id_article,
+       U.id_utilisateur,
+       C.commentaire,
+       C.date_publication,
+       AVG(N.note) AS note_moyenne
+FROM commentaire C
+INNER JOIN utilisateur U ON U.id_utilisateur = C.utilisateur_id
+LEFT JOIN note N ON N.utilisateur_id = U.id_utilisateur
+WHERE C.peinture_id = %s
+  AND (C.valider = 1 OR U.id_utilisateur = %s)
+GROUP BY U.nom, C.peinture_id, U.id_utilisateur, C.commentaire, C.date_publication
+ORDER BY C.date_publication ASC, U.id_utilisateur DESC;'''
     comm = (id_article, id_client)
     mycursor.execute(sql_commentaires, comm)
     commentaires = mycursor.fetchall()
@@ -98,6 +99,7 @@ def client_article_details():
     '''
     mycursor.execute(sql_nb_commentaires, id_article)
     nb_commentaires['nb_commentaires_total'] = mycursor.fetchone()['nb_commentaires']
+
     sql_nb_commentaires_individuel = '''
         SELECT COUNT(*) AS nb_commentaires
         FROM commentaire

@@ -11,18 +11,6 @@ admin_dataviz = Blueprint('admin_dataviz', __name__,
 @admin_dataviz.route('/admin/dataviz/etat1')
 def show_type_article_stock():
     mycursor = get_db().cursor()
-    #sql = '''
-    #
-    #       '''
-    # mycursor.execute(sql)
-    # datas_show = mycursor.fetchall()
-    # labels = [str(row['libelle']) for row in datas_show]
-    # values = [int(row['nbr_articles']) for row in datas_show]
-
-    # sql = '''
-    #         
-    #        '''
-    datas_show=[] #TODO a quoi ca sert ? J'ai fait autrement.
 
     labels=[]
     values=[]
@@ -35,18 +23,18 @@ def show_type_article_stock():
     mycursor.execute(sql_nb_type_peinture)
     types_articles_nb = mycursor.fetchone()
 
-    lignes = ''' 
-    SELECT 
+    lignes = '''
+    SELECT
     t.nom_categorie AS libelle,
     t.id_categorie AS id_type_article,
     COUNT(DISTINCT p.id_peinture) AS nbr_articles
-FROM 
+    FROM
     categorie t
-INNER JOIN 
+    INNER JOIN
     peinture p ON t.id_categorie = p.categorie_id
-GROUP BY 
+    GROUP BY
     t.id_categorie
-ORDER BY t.nom_categorie ASC;'''
+    ORDER BY t.nom_categorie ASC;'''
     mycursor.execute(lignes)
     lignes = mycursor.fetchall()
 
@@ -56,20 +44,34 @@ ORDER BY t.nom_categorie ASC;'''
     mycursor.execute(sql_nb_peinture)
     nbr_articles = mycursor.fetchone()
 
+#    lignes = '''
+#        SELECT
+#        t.nom_categorie AS libelle,
+#        t.id_categorie AS id_type_article,
+#        AVG(n.note) AS nbr_articles
+#    FROM
+#        note n
+#    INNER JOIN
+#        peinture p ON t.id_categorie = p.categorie_id
+#    GROUP BY
+#        t.id_categorie, t.nom_categorie
+#    ORDER BY t.nom_categorie ASC;'''
+#    mycursor.execute(lignes)
+#    lignes = mycursor.fetchall()
+#
+#    for ligne in lignes:
+#        if ligne['nbr_articles'] is None:
+#            ligne['nbr_articles'] = 0
+
     if nbr_articles is None:
         nbr_articles = 0
-
-    datas_show = []
 
     # Remplir les libellés et les valeurs à partir des résultats de la requête SQL
     for ligne in lignes:
         labels.append(ligne['libelle'])  # Ajouter le libellé à la liste des libellés
         values.append(ligne['nbr_articles'])  # Ajouter la valeur à la liste des valeurs
 
-    # Dans ce cas, datas_show n'est pas utilisé, mais vous pouvez le remplir avec les données supplémentaires si nécessaire
-
     return render_template('admin/dataviz/dataviz_etat_1.html'
-                           #, datas_show=datas_show
                            , labels=labels
                            , values=values
                            , types_articles_nb=types_articles_nb
