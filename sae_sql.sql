@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS peinture (
     nom_peinture VARCHAR(50),
     volume_pot DECIMAL(5, 2),
     numero_melange INT,
-    prix_peinture DECIMAL(15, 2),
+    prix_peinture,
     couleur_id INT,
     categorie_id INT,
     fournisseur VARCHAR(50),
@@ -38,6 +38,24 @@ CREATE TABLE IF NOT EXISTS peinture (
     PRIMARY KEY (id_peinture),
     FOREIGN KEY (couleur_id) REFERENCES couleur (id_couleur),
     FOREIGN KEY (categorie_id) REFERENCES categorie (id_categorie)
+);
+
+CREATE TABLE IF NOT EXISTS taille(
+    id_taille INT AUTO_INCREMENT,
+    libelle VARCHAR(50),
+    code_taille INT,
+    PRIMARY KEY (id_taille)
+);
+
+CREATE TABLE IF NOT EXISTS declinaison(
+    id_declinaison_peinture INT AUTO_INCREMENT,
+    stock INT,
+    prix_declinaison DECIMAL(15, 2),
+    peinture_id INT,
+    taille_id INT,
+    PRIMARY KEY (id_declinaison_peinture),
+    FOREIGN KEY (peinture_id) REFERENCES peinture(id_peinture),
+    FOREIGN KEY (taille_id) REFERENCES taille(id_taille)
 );
 
 CREATE TABLE IF NOT EXISTS utilisateur (
@@ -71,22 +89,22 @@ CREATE TABLE IF NOT EXISTS commande (
 
 CREATE TABLE IF NOT EXISTS ligne_commande (
     commande_id INT,
-    peinture_id INT,
+    declinaison_peinture_id INT,
     prix DECIMAL(15, 2),
     quantite INT,
-    PRIMARY KEY (commande_id, peinture_id),
+    PRIMARY KEY (commande_id, declinaison_peinture_id),
     FOREIGN KEY (commande_id) REFERENCES commande(id_commande),
-    FOREIGN KEY (peinture_id) REFERENCES peinture(id_peinture)
+    FOREIGN KEY (declinaison_peinture_id) REFERENCES declinaison(id_declinaison_peinture)
 );
 
 CREATE TABLE IF NOT EXISTS ligne_panier (
     utilisateur_id INT,
-    peinture_id INT,
+    declinaison_peinture_id INT,
     quantite INT,
     date_ajout DATE,
-    PRIMARY KEY (utilisateur_id, peinture_id),
+    PRIMARY KEY (utilisateur_id, declinaison_peinture_id),
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-    FOREIGN KEY (peinture_id) REFERENCES peinture(id_peinture)
+    FOREIGN KEY (declinaison_peinture_id) REFERENCES declinaison(id_declinaison_peinture)
 );
 
 ALTER TABLE peinture ADD COLUMN description VARCHAR(1024);
@@ -112,6 +130,11 @@ INSERT INTO couleur (nom_couleur) VALUES
     ('Viva magenta'),
     ('Jaune');
 
+INSERT INTO taille (libelle, code_taille) VALUES
+  ('1L', 1),
+  ('2.5L', 2),
+  ('5L', 3);
+
 INSERT INTO peinture (nom_peinture, volume_pot, numero_melange, prix_peinture, couleur_id, categorie_id, fournisseur, marque, image, stock) VALUES
     ('Peinture Premium Rouge Intérieur', 2.5, 101, 25.99, 1, 1, 'Team chartreuse', 'Team Chartreuse', 'peinture_premium_rouge_interieur.png', 5),
     ('Bouclier Bleu Extérieur', 1.0, 102, 15.50, 2, 1, 'Eclat d\'étoile', 'Eclat d\'étoile', 'bouclier_bleu_exterieur.png', 8),
@@ -128,7 +151,56 @@ INSERT INTO peinture (nom_peinture, volume_pot, numero_melange, prix_peinture, c
     ('Lueur Écologique Vert Intérieur', 2.5, 115, 24.75, 3, 5, 'Adam Peinture', 'Team Chartreuse', 'lueur_ecologique_vert_interieur.png',7),
     ('Ecru', 1.5, 117, 15.55, 4, 6, 'Adam Peinture', 'Team Chartreuse', 'ecru.png', 89),
     ('Chartreuse', 3.5, 127, 32.99, 1, 3, 'Team Chartreuse', 'Team Chartreuse', 'chartreuse.png', 10);
-    
+
+
+# ---------------------------------------------
+# Déclinaisons pour les peintures sélectionnées
+# ---------------------------------------------
+
+
+-- 1. Peinture Premium Rouge Intérieur
+INSERT INTO declinaison (stock, prix_declinaison, peinture_id, taille_id) VALUES
+(10, 25.99, 1, 1), -- 1L
+(5, 32.99, 1, 2), -- 2.5L
+(2, 40.99, 1, 3); -- 5L
+
+-- 2. Bouclier Bleu Extérieur
+INSERT INTO declinaison (stock, prix_declinaison, peinture_id, taille_id) VALUES
+(8, 15.50, 2, 1), -- 1L
+(4, 20.50, 2, 2), -- 2.5L
+(2, 25.50, 2, 3); -- 5L
+
+-- 3. Vert Écologique
+INSERT INTO declinaison (stock, prix_declinaison, peinture_id, taille_id) VALUES
+(11, 30.75, 3, 1), -- 1L
+(6, 37.75, 3, 2), -- 2.5L
+(3, 44.75, 3, 3); -- 5L
+
+-- 4. Apprêt Jaune Universel
+INSERT INTO declinaison (stock, prix_declinaison, peinture_id, taille_id) VALUES
+(58, 20.00, 4, 1), -- 1L
+(29, 25.00, 4, 2), -- 2.5L
+(15, 30.00, 4, 3); -- 5L
+
+-- 5. Harmonie Intérieure Rouge
+INSERT INTO declinaison (stock, prix_declinaison, peinture_id, taille_id) VALUES
+(26, 18.99, 5, 1), -- 1L
+(13, 23.99, 5, 2), -- 2.5L
+(7, 28.99, 5, 3); -- 5L
+
+-- 6. ProShield Bleu Extérieur
+INSERT INTO declinaison (stock, prix_declinaison, peinture_id, taille_id) VALUES
+(3, 25.50, 6, 1), -- 1L
+(2, 30.50, 6, 2), -- 2.5L
+(1, 35.50, 6, 3); -- 5L
+
+-- 7. Peinture Écologique GreenTech
+INSERT INTO declinaison (stock, prix_declinaison, peinture_id, taille_id) VALUES
+(89, 15.75, 7, 1), -- 1L
+(45, 20.75, 7, 2), -- 2.5L
+(23, 25.75, 7, 3); -- 5L
+
+
 INSERT INTO utilisateur(id_utilisateur,login,email,password,role,nom) VALUES
     (1,'admin','admin@admin.fr',
     'pbkdf2:sha256:600000$olNVM35LlMvBbE12$8e04be309fd45d72c684f5caa3804afbb77bfb3f6bec5fdd5a9a86165cd7092a',
