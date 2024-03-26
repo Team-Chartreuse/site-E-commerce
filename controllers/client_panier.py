@@ -15,29 +15,27 @@ def client_panier_add():
     id_article = request.form.get('id_article')
     quantite = request.form.get('quantite')
     # ---------
-    id_declinaison_article = request.form.get('id_declinaison_article', None)
-    id_declinaison_article = 1
+    # id_declinaison_article = request.form.get('id_declinaison_article', None)
+    # id_declinaison_article = 1
 
     # ajout dans le panier d'une déclinaison d'un article (si 1 declinaison : immédiat sinon => vu pour faire un choix
     sql = '''
     SELECT
         declinaison.taille_id AS id_taille,
         taille.libelle AS libelle_taille,
-        declinaison.id_declinaison_peinture,
-        declinaison.peinture_id AS id_peinture,
-        declinaison.stock,
-        peinture.prix_peinture AS prix
+        declinaison.id_declinaison_peinture AS id_declinaison_article,
+        declinaison.peinture_id AS id_article,
+        declinaison.stock AS stock,
+        declinaison.prix_declinaison AS prix
         
     FROM declinaison
     LEFT JOIN taille ON declinaison.taille_id = taille.id_taille
-    JOIN peinture ON declinaison.peinture_id = peinture.id_peinture
     WHERE declinaison.peinture_id = %s;
     '''
 
     mycursor.execute(sql, id_article)
     declinaisons = mycursor.fetchall()
     print(declinaisons)
-    print("id_article = " + str(id_article))
     if len(declinaisons) == 1:
         id_declinaison_article = declinaisons[0]['id_peinture']
     elif len(declinaisons) == 0:
@@ -49,6 +47,18 @@ def client_panier_add():
         '''
         # tuple_insert_ligne = (declinaisons[])
         mycursor.execute(sql, (id_client, id_article, quantite))
+
+        sql = '''
+        SELECT
+            peinture.id_peinture AS id_article,
+            peinture.nom_peinture AS nom,
+            peinture.prix_peinture AS prix,
+            peinture.image AS image
+        FROM peinture
+        WHERE id_peinture = %s;
+        '''
+
+        mycursor.execute(sql, (id_article,))
         article = mycursor.fetchone()
         return render_template('client/boutique/declinaison_article.html'
                                , declinaisons=declinaisons

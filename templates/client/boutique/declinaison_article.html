@@ -28,7 +28,7 @@
                         couleur : <stong style="color:{{ item_declinaison.code_couleur }}">{{ item_declinaison.libelle_couleur }}</stong>
                     {% endif %}
                     {% if item_declinaison.id_taille is defined and  item_declinaison.id_taille > 1 %}
-                      - taille : <span> {{ item_declinaison.libelle_taille }}</span>
+                       &nbsp;taille : <span> {{ item_declinaison.libelle_taille }}</span>
                     {% endif %}
                     {% if item_declinaison.stock is defined and item_declinaison.stock != None %}
                         {% if item_declinaison.stock > 0 %}

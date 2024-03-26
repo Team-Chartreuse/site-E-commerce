@@ -85,16 +85,17 @@ def client_article_show():             # remplace client_index
     categorie = mycursor.fetchall()
 
     # Fetch des articles du panier
-    sql = '''SELECT
-    l.*,
-    d.prix_declinaison AS prix,
-    d.stock AS stock,
-    p.nom_peinture AS nom
-FROM
-    ligne_panier l
-JOIN declinaison d on d.id_declinaison_peinture = l.declinaison_peinture_id
-LEFT JOIN peinture p on d.peinture_id = p.id_peinture
-WHERE
+    sql = '''
+    SELECT
+        l.*,
+        d.prix_declinaison AS prix,
+        d.stock AS stock,
+        p.nom_peinture AS nom
+    FROM
+        ligne_panier l
+    JOIN declinaison d on d.id_declinaison_peinture = l.declinaison_peinture_id
+    LEFT JOIN peinture p on d.peinture_id = p.id_peinture
+    WHERE
     l.utilisateur_id = %s;'''
 
     mycursor.execute(sql, id_client)
@@ -103,9 +104,9 @@ WHERE
     if len(articles_panier) >= 1:
         sql = '''
         SELECT
-        p.nom_peinture AS nom,
-        SUM(p.prix_peinture * l.quantite) as total,
-        d.taille_id AS id_taille
+            p.nom_peinture AS nom,
+            SUM(p.prix_peinture * l.quantite) as total,
+            d.taille_id AS id_taille
         FROM
             ligne_panier l
         JOIN declinaison d on d.id_declinaison_peinture = l.declinaison_peinture_id
