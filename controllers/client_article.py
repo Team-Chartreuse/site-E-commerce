@@ -28,8 +28,10 @@ def client_article_show():             # remplace client_index
         image,
         nom_couleur,
         nom_categorie,
-        stock
+        SUM(declinaison.stock) AS stock
     FROM peinture
+    JOIN declinaison
+    ON peinture.id_peinture = declinaison.peinture_id
     JOIN couleur
     ON peinture.couleur_id = couleur.id_couleur
     JOIN categorie
@@ -52,12 +54,16 @@ def client_article_show():             # remplace client_index
         condition.append("categorie_id IN ({})".format(','.join(['%s'] * len(session['filter_categorie']))))
         list_param.extend([int(x) for x in session['filter_categorie']])
 
+    sql_group_by = """
+    GROUP BY peinture.id_peinture
+    """
+
     condition_and = ""
     if len(condition) > 0:
         condition_and = " WHERE " + " AND ".join(condition)
     # utilisation du filtre
     sql3 = ''' prise en compte des commentaires et des notes dans le SQL    '''  # TODO
-    mycursor.execute(sql+condition_and, tuple(list_param))
+    mycursor.execute(sql+condition_and+sql_group_by, tuple(list_param))
     articles = mycursor.fetchall()
 
     # pour le filtre
@@ -81,12 +87,13 @@ def client_article_show():             # remplace client_index
     # Fetch des articles du panier
     sql = '''SELECT
     l.*,
-    p.prix_peinture AS prix,
-    p.stock AS stock,
+    d.prix_declinaison AS prix,
+    d.stock AS stock,
     p.nom_peinture AS nom
 FROM
     ligne_panier l
-LEFT JOIN peinture p on l.peinture_id = p.id_peinture
+JOIN declinaison d on d.id_declinaison_peinture = l.declinaison_peinture_id
+LEFT JOIN peinture p on d.peinture_id = p.id_peinture
 WHERE
     l.utilisateur_id = %s;'''
 
@@ -94,14 +101,17 @@ WHERE
     articles_panier = mycursor.fetchall()
 
     if len(articles_panier) >= 1:
-
-        sql = '''SELECT
-    SUM(p.prix_peinture * l.quantite) as total
-FROM
-    ligne_panier l
-LEFT JOIN peinture p on l.peinture_id = p.id_peinture
-WHERE
-    l.utilisateur_id = %s;'''
+        sql = '''
+        SELECT
+        p.nom_peinture AS nom,
+        SUM(p.prix_peinture * l.quantite) as total,
+        d.taille_id AS id_taille
+        FROM
+            ligne_panier l
+        JOIN declinaison d on d.id_declinaison_peinture = l.declinaison_peinture_id
+        LEFT JOIN peinture p on d.peinture_id = p.id_peinture
+        WHERE
+        l.utilisateur_id = %s;'''
 
         mycursor.execute(sql, id_client)
         res = mycursor.fetchall()

@@ -15,16 +15,24 @@ def client_panier_add():
     id_article = request.form.get('id_article')
     quantite = request.form.get('quantite')
     # ---------
-    id_declinaison_article = request.form.get('id_declinaison_article',None)
+    id_declinaison_article = request.form.get('id_declinaison_article', None)
     id_declinaison_article = 1
 
     # ajout dans le panier d'une déclinaison d'un article (si 1 declinaison : immédiat sinon => vu pour faire un choix
-    sql = '''SELECT
-    *
-FROM couleur
-LEFT JOIN peinture p on couleur.id_couleur = p.couleur_id
-WHERE
-    id_peinture = %s;'''
+    sql = '''
+    SELECT
+        declinaison.taille_id AS id_taille,
+        taille.libelle AS libelle_taille,
+        declinaison.id_declinaison_peinture,
+        declinaison.peinture_id AS id_peinture,
+        declinaison.stock,
+        peinture.prix_peinture AS prix
+        
+    FROM declinaison
+    LEFT JOIN taille ON declinaison.taille_id = taille.id_taille
+    JOIN peinture ON declinaison.peinture_id = peinture.id_peinture
+    WHERE declinaison.peinture_id = %s;
+    '''
 
     mycursor.execute(sql, id_article)
     declinaisons = mycursor.fetchall()
@@ -35,35 +43,41 @@ WHERE
     elif len(declinaisons) == 0:
         abort("pb nb de declinaison")
     else:
-        sql = '''  INSERT INTO ligne_panier (utilisateur_id, peinture_id, quantite, date_ajout)
-         VALUE ()''' # TODO demander quelle déclinaison choisir
+        sql = '''
+        INSERT INTO ligne_panier (utilisateur_id, declinaison_peinture_id, quantite, date_ajout)
+        VALUE (%s, %s, %s, NOW())
+        '''
         # tuple_insert_ligne = (declinaisons[])
-        mycursor.execute(sql, id_article)
+        mycursor.execute(sql, (id_client, id_article, quantite))
         article = mycursor.fetchone()
         return render_template('client/boutique/declinaison_article.html'
-                                   , declinaisons=declinaisons
-                                   , quantite=quantite
-                                   , article=article)
+                               , declinaisons=declinaisons
+                               , quantite=quantite
+                               , article=article)
 
     # ajout dans le panier d'un article
-    sql = '''SELECT * FROM ligne_panier WHERE utilisateur_id = %s AND peinture_id = %s;'''
+    sql = '''SELECT * FROM ligne_panier WHERE utilisateur_id = %s AND declinaison_peinture_id = %s;'''
     mycursor.execute(sql, (id_client, id_article))
 
     is_article_already_in = len(mycursor.fetchall()) > 0
 
     if is_article_already_in:
-        sql = '''UPDATE ligne_panier SET quantite = quantite + %s WHERE utilisateur_id = %s AND peinture_id = %s;'''
+        sql = '''
+        UPDATE ligne_panier SET quantite = quantite + %s WHERE utilisateur_id = %s AND declinaison_peinture_id = %s;
+        '''
         mycursor.execute(sql, (quantite, id_client, id_article))
 
         # Retirer un article du stock
-        sql = '''UPDATE peinture SET stock = stock - %s WHERE id_peinture = %s;'''
+        sql = '''UPDATE declinaison SET stock = stock - %s WHERE id_declinaison_peinture = %s;'''
         mycursor.execute(sql, (quantite, id_article))
     else:
-        sql = "INSERT INTO ligne_panier (utilisateur_id, peinture_id, quantite, date_ajout) VALUE  (%s, %s, %s, NOW());"
+        sql = '''
+        INSERT INTO ligne_panier (utilisateur_id, declinaison_peinture_id, quantite, date_ajout) VALUE  (%s, %s, %s, NOW());
+        '''
         mycursor.execute(sql, (id_client, id_article, quantite))
 
         # Retirer des articles du stock
-        sql = '''UPDATE peinture SET stock = stock - %s WHERE id_peinture = %s;'''
+        sql = '''UPDATE declinaison SET stock = stock - %s WHERE id_declinaison_peinture = %s;'''
         mycursor.execute(sql, (quantite, id_article))
 
     get_db().commit()
@@ -84,28 +98,30 @@ def client_panier_delete():
 
     sql = '''SELECT
     l.*
-FROM
-    ligne_panier l
-LEFT JOIN peinture p on l.peinture_id = p.id_peinture
-WHERE
-    l.utilisateur_id = %s
-    AND l.peinture_id = %s;'''
+    FROM
+        ligne_panier l
+    LEFT JOIN declinaison d on l.declinaison_peinture_id = d.id_declinaison_peinture
+    WHERE
+        l.utilisateur_id = %s
+        AND l.declinaison_peinture_id = %s;'''
 
     mycursor.execute(sql, (id_client, id_article))
     article_panier = mycursor.fetchone()
 
     if not (article_panier is None) and int(article_panier['quantite']) > 1:
-        sql = '''UPDATE ligne_panier SET quantite = quantite - 1 WHERE utilisateur_id = %s AND peinture_id = %s;'''
+        sql = '''
+        UPDATE ligne_panier SET quantite = quantite - 1 WHERE utilisateur_id = %s AND declinaison_peinture_id = %s;
+        '''
         mycursor.execute(sql, (id_client, id_article))
 
         # mise à jour du stock de l'article disponible
-        sql = '''UPDATE peinture SET stock = stock + 1 WHERE id_peinture = %s;'''
+        sql = '''UPDATE declinaison SET stock = stock + 1 WHERE id_declinaison_peinture = %s;'''
         mycursor.execute(sql, id_article)
     else:
-        sql = '''DELETE FROM ligne_panier WHERE utilisateur_id = %s AND peinture_id = %s;'''
+        sql = '''DELETE FROM ligne_panier WHERE utilisateur_id = %s AND declinaison_peinture_id = %s;'''
         mycursor.execute(sql, (id_client, id_article))
 
-        sql = '''UPDATE peinture SET stock = stock + %s WHERE id_peinture = %s;'''
+        sql = '''UPDATE declinaison SET stock = stock + %s WHERE id_declinaison_peinture = %s;'''
         mycursor.execute(sql, (quantite, id_article))
 
     # mise à jour du stock de l'article disponible
@@ -128,9 +144,9 @@ WHERE
     items_panier = mycursor.fetchall()
     for item in items_panier:
         print(item)
-        sql = '''DELETE FROM ligne_panier WHERE utilisateur_id = %s AND peinture_id = %s;'''
+        sql = '''DELETE FROM ligne_panier WHERE utilisateur_id = %s AND declinaison_peinture_id = %s;'''
         mycursor.execute(sql, (client_id, item["peinture_id"]))
-        sql2 = '''UPDATE peinture SET stock = stock + %s WHERE id_peinture = %s;'''
+        sql2 = '''UPDATE declinaison SET stock = stock + %s WHERE id_declinaison_peinture = %s;'''
         mycursor.execute(sql2, (item["quantite"], item["peinture_id"]))
         get_db().commit()
     return redirect('/client/article/show')
@@ -143,7 +159,7 @@ def client_panier_delete_line():
     id_article = request.form.get("id_article", "")
     # id_declinaison_article = request.form.get('id_declinaison_article')
 
-    sql = '''SELECT * FROM ligne_panier WHERE utilisateur_id = %s AND peinture_id = %s;'''
+    sql = '''SELECT * FROM ligne_panier WHERE utilisateur_id = %s AND declinaison_peinture_id = %s;'''
     mycursor.execute(sql, (id_client, id_article))
     lines = mycursor.fetchall()
     if len(lines) < 1:
@@ -151,9 +167,9 @@ def client_panier_delete_line():
 
     line = lines[0]
 
-    sql = '''DELETE FROM ligne_panier WHERE utilisateur_id = %s AND peinture_id = %s;'''
+    sql = '''DELETE FROM ligne_panier WHERE utilisateur_id = %s AND declinaison_peinture_id = %s;'''
     mycursor.execute(sql, (id_client, id_article))
-    sql2 = '''UPDATE peinture SET stock = stock + %s WHERE id_peinture = %s;'''
+    sql2 = '''UPDATE declinaison SET stock = stock + %s WHERE id_declinaison_peinture = %s;'''
     mycursor.execute(sql2, (line["quantite"], id_article))
 
     get_db().commit()

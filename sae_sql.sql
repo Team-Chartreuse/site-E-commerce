@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS ligne_commande;
 DROP TABLE IF EXISTS commande;
 DROP TABLE IF EXISTS etat;
 DROP TABLE IF EXISTS utilisateur;
+DROP TABLE IF EXISTS declinaison;
 DROP TABLE IF EXISTS peinture;
 DROP TABLE IF EXISTS categorie;
 DROP TABLE IF EXISTS couleur;
@@ -27,13 +28,12 @@ CREATE TABLE IF NOT EXISTS peinture (
     nom_peinture VARCHAR(50),
     volume_pot DECIMAL(5, 2),
     numero_melange INT,
-    prix_peinture,
+    prix_peinture DECIMAL(15, 2),
     couleur_id INT,
     categorie_id INT,
     fournisseur VARCHAR(50),
     marque VARCHAR(50),
     image VARCHAR(128),
-    stock INT,
 
     PRIMARY KEY (id_peinture),
     FOREIGN KEY (couleur_id) REFERENCES couleur (id_couleur),
@@ -135,22 +135,22 @@ INSERT INTO taille (libelle, code_taille) VALUES
   ('2.5L', 2),
   ('5L', 3);
 
-INSERT INTO peinture (nom_peinture, volume_pot, numero_melange, prix_peinture, couleur_id, categorie_id, fournisseur, marque, image, stock) VALUES
-    ('Peinture Premium Rouge Intérieur', 2.5, 101, 25.99, 1, 1, 'Team chartreuse', 'Team Chartreuse', 'peinture_premium_rouge_interieur.png', 5),
-    ('Bouclier Bleu Extérieur', 1.0, 102, 15.50, 2, 1, 'Eclat d\'étoile', 'Eclat d\'étoile', 'bouclier_bleu_exterieur.png', 8),
-    ('Vert Écologique', 3.0, 103, 30.75, 3, 2, 'Team Chartreuse', 'Team Chartreuse', 'vert_ecologique.png', 11),
-    ('Apprêt Jaune Universel', 2.0, 104, 20.00, 4, 2, 'Eclat d\'étoile', 'Eclat d\'étoile', 'appret_jaune_universel.png', 58),
-    ('Harmonie Intérieure Rouge', 1.5, 105, 18.99, 1, 3, 'Bricodeco', 'Team Chartreuse', 'harmonie_interieure_rouge.png', 26),
-    ('ProShield Bleu Extérieur', 2.5, 106, 25.50, 2, 3, 'Bricodeco', 'Team Chartreuse', 'proshield_bleu_exterieur.png', 3),
-    ('Peinture Écologique GreenTech', 1.0, 107, 15.75, 3, 4, 'Eclat d\'étoile', 'Eclat d\'étoile', 'peinture_ecologique_greentech.png', 89),
-    ('Premium Jaune Extérieur', 3.0, 108, 32.00, 4, 4, 'Team Chartreuse', 'Team Chartreuse', 'premium_jaune_exterieur.png', 7),
-    ('Harmonie Intérieure Rouge', 2.0, 109, 21.99, 1, 5, 'Adam Peinture', 'Team Chartreuse', 'harmonie_interieure_rouge.png', 4),
-    ('Ciel Étoilé Bleu', 1.5, 110, 17.50, 2, 5, 'Adam Peinture', 'Team Chartreuse', 'ciel_etoile_bleu.png', 56),
-    ('Éclat Vert Artistique', 2.5, 111, 28.75, 3, 6, 'Adam Peinture', 'Team Chartreuse', 'eclat_vert_artistique.png', 23),
-    ('Apprêt Gris Universel', 2.0, 112, 22.00, 4, 6, 'Team Chartreuse', 'Team Chartreuse', 'appret_gris_universel.png', 32),
-    ('Lueur Écologique Vert Intérieur', 2.5, 115, 24.75, 3, 5, 'Adam Peinture', 'Team Chartreuse', 'lueur_ecologique_vert_interieur.png',7),
-    ('Ecru', 1.5, 117, 15.55, 4, 6, 'Adam Peinture', 'Team Chartreuse', 'ecru.png', 89),
-    ('Chartreuse', 3.5, 127, 32.99, 1, 3, 'Team Chartreuse', 'Team Chartreuse', 'chartreuse.png', 10);
+INSERT INTO peinture (nom_peinture, volume_pot, numero_melange, prix_peinture, couleur_id, categorie_id, fournisseur, marque, image) VALUES
+    ('Peinture Premium Rouge Intérieur', 2.5, 101, 25.99, 1, 1, 'Team chartreuse', 'Team Chartreuse', 'peinture_premium_rouge_interieur.png'),
+    ('Bouclier Bleu Extérieur', 1.0, 102, 15.50, 2, 1, 'Eclat d\'étoile', 'Eclat d\'étoile', 'bouclier_bleu_exterieur.png'),
+    ('Vert Écologique', 3.0, 103, 30.75, 3, 2, 'Team Chartreuse', 'Team Chartreuse', 'vert_ecologique.png'),
+    ('Apprêt Jaune Universel', 2.0, 104, 20.00, 4, 2, 'Eclat d\'étoile', 'Eclat d\'étoile', 'appret_jaune_universel.png'),
+    ('Harmonie Intérieure Rouge', 1.5, 105, 18.99, 1, 3, 'Bricodeco', 'Team Chartreuse', 'harmonie_interieure_rouge.png'),
+    ('ProShield Bleu Extérieur', 2.5, 106, 25.50, 2, 3, 'Bricodeco', 'Team Chartreuse', 'proshield_bleu_exterieur.png'),
+    ('Peinture Écologique GreenTech', 1.0, 107, 15.75, 3, 4, 'Eclat d\'étoile', 'Eclat d\'étoile', 'peinture_ecologique_greentech.png'),
+    ('Premium Jaune Extérieur', 3.0, 108, 32.00, 4, 4, 'Team Chartreuse', 'Team Chartreuse', 'premium_jaune_exterieur.png'),
+    ('Harmonie Intérieure Rouge', 2.0, 109, 21.99, 1, 5, 'Adam Peinture', 'Team Chartreuse', 'harmonie_interieure_rouge.png'),
+    ('Ciel Étoilé Bleu', 1.5, 110, 17.50, 2, 5, 'Adam Peinture', 'Team Chartreuse', 'ciel_etoile_bleu.png'),
+    ('Éclat Vert Artistique', 2.5, 111, 28.75, 3, 6, 'Adam Peinture', 'Team Chartreuse', 'eclat_vert_artistique.png'),
+    ('Apprêt Gris Universel', 2.0, 112, 22.00, 4, 6, 'Team Chartreuse', 'Team Chartreuse', 'appret_gris_universel.png'),
+    ('Lueur Écologique Vert Intérieur', 2.5, 115, 24.75, 3, 5, 'Adam Peinture', 'Team Chartreuse', 'lueur_ecologique_vert_interieur.png'),
+    ('Ecru', 1.5, 117, 15.55, 4, 6, 'Adam Peinture', 'Team Chartreuse', 'ecru.png'),
+    ('Chartreuse', 3.5, 127, 32.99, 1, 3, 'Team Chartreuse', 'Team Chartreuse', 'chartreuse.png'    );
 
 
 # ---------------------------------------------
@@ -199,6 +199,18 @@ INSERT INTO declinaison (stock, prix_declinaison, peinture_id, taille_id) VALUES
 (89, 15.75, 7, 1), -- 1L
 (45, 20.75, 7, 2), -- 2.5L
 (23, 25.75, 7, 3); -- 5L
+
+-- Déclinaisons par défaut pour les peintures restantes
+
+INSERT INTO declinaison (stock, prix_declinaison, peinture_id, taille_id) VALUES
+(10, 19.99, 8, 2), -- Harmonie Intérieure Rouge
+(12, 22.99, 9, 2), -- Ciel Étoilé Bleu
+(15, 27.99, 10, 2), -- Éclat Vert Artistique
+(20, 23.99, 11, 2), -- Apprêt Gris Universel
+(18, 25.99, 12, 2), -- Lueur Écologique Vert Intérieur
+(25, 16.99, 13, 2), -- Ecru
+(30, 33.99, 14, 2); -- Chartreuse
+
 
 
 INSERT INTO utilisateur(id_utilisateur,login,email,password,role,nom) VALUES
